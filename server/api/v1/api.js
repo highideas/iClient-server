@@ -9,6 +9,7 @@ module.exports = function (wagner) {
     app.use(bodyparser.json());
 
     app = rootRequire('/api/v1/client')(wagner, app);
+    app = rootRequire('/api/v1/auth')(wagner, app);
     
     return app;
 };

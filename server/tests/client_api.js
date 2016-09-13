@@ -1,47 +1,15 @@
-global.rootRequire = function(name) {
-    return require(require('path').dirname(__filename) + '/../' + name);
-}
-
 var assert = require('assert');
-var express = require('express');
-var wagner = require('wagner-core');
 var superagent = require('superagent');
-var _ = require('underscore');
 var status = require('http-status');
+var bodyparser = require('body-parser');
 
 var URL_ROOT = 'http://localhost:3001';
 
-describe("Client API", function() {
-    var server;
-    var Client;
+module.exports = function (Client) {
 
-    before(function () {
-        var app = express();
+var Client = Client;
 
-        config = {
-            "host" : "mongodb://localhost",
-            "port" : "27017",
-            "database" : "iclient_test",
-            "secret" : "Keysecret"
-        };
-
-        models = rootRequire('models/models')(wagner, config);
-
-        var deps = wagner.invoke(function(Client) {
-            return {
-                Client : Client
-            }
-        });
-
-        Client = deps.Client;
-
-        app.use(rootRequire('api/v1/api')(wagner));
-        server = app.listen(3001);
-    });
-
-    after(function(){
-        server.close();
-    });
+describe('Clients API', function () {
 
     beforeEach(function (done) {
         Client.remove({}, function (error) {
@@ -51,7 +19,7 @@ describe("Client API", function() {
     });
 
     beforeEach(function (done) {
-         var data = [
+        var data = [
             {
             "_id" : '000000000000000000000001',
             "name" : "Gabriel",
@@ -64,14 +32,13 @@ describe("Client API", function() {
             "address" : "Street 32",
             "city"  : "Madrid"
             },
-        ];        
+        ];
 
         Client.create(data, function (err) {
             assert.ifError(err);
             done();
         });
     });
-
 
     it('return all clients', function (done) {
         var url = URL_ROOT + '/client';
@@ -97,19 +64,18 @@ describe("Client API", function() {
             assert.equal(res.status, status.OK);
 
             var results;
-            assert.doesNotThrow(function (){ 
+            assert.doesNotThrow(function (){
                 results = JSON.parse(res.text).client;
             });
 
-            assert.equal(results.length, 1); 
+            assert.equal(results.length, 1);
             assert.equal(results[0].name, "gabriel");
             done();
         });
     });
 
-    it('can create a Client', function (done) {
+     it('can create a Client', function (done) {
         var url = URL_ROOT + '/client/';
-
         superagent.post(url)
             .send({
                 'name' : 'New Client',
@@ -127,7 +93,7 @@ describe("Client API", function() {
             });
     });
 
-    it('can\'t create a Client invalid', function (done) {
+     it('can\'t create a Client invalid', function (done) {
         var url = URL_ROOT + '/client/';
 
         superagent.post(url)
@@ -183,4 +149,8 @@ describe("Client API", function() {
                 });
             });
     });
+
+
 });
+
+}

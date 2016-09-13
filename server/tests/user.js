@@ -18,6 +18,7 @@ describe('User Schema Tests', function () {
             done();
         });
     });
+
     it('has a email field that\' required string', function () {
         var user = new User({});
         user.validate(function (err) {
@@ -30,6 +31,7 @@ describe('User Schema Tests', function () {
             done();
         });
     });
+
     it('has a password field that\' required string', function () {
         var user = new User({});
         user.validate(function (err) {
