@@ -13,6 +13,10 @@ rootRequire('models/models')(wagner, Config);
 
 var app = express();
 
+var fs = require('fs');
+var accessLogStream = fs.createWriteStream(__dirname + '/logs/access.log',{flags: 'a'});
+app.use(require('morgan')('combined', {stream: accessLogStream}));
+
 app.use(function(req, res, next) {
     res.append('Access-Control-Allow-Origin', req.headers.origin || "*");
     res.append('Access-Control-Allow-Credentials', 'true');
@@ -26,9 +30,7 @@ app.set('superSecret', Config.secret);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.get('/', function(req, res) {
-    res.send('Hello! The API is at http://localhost:3000/api');
-});
+app.use('/api/v1', rootRequire('api/v1/api')(wagner));
 
 app.listen(3000);
 console.log('Listening on port 3000!');

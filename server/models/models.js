@@ -3,9 +3,9 @@ var _ = require('underscore');
 
 module.exports = function (wagner, Config) {
     var urlMongo =   Config.host + ':' + 
-
                 Config.port + '/' + 
                 Config.database;
+
     mongoose.connect(urlMongo);
 
     wagner.factory('db', function(){
