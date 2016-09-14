@@ -20,9 +20,9 @@ module.exports = function (wagner, api, Config) {
                         return res.json({ success: false, message: 'Authentication failed. Wrong password.' });
                     }
                     var token = jwt.sign(user, Config.secret);
-                    var autorization = 'Bearer ' + token;
+                    var authorization = 'Bearer ' + token;
 
-                    res.header('Autorization', autorization);
+                    res.header('Authorization', authorization);
                     res.header("x-access-token", token);
 
                     return res.json({

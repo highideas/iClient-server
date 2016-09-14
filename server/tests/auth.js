@@ -42,7 +42,7 @@ describe('Auth API', function () {
                 assert.ifError(error);
                 assert.equal(res.status, status.OK);
                 assert.ok(res.headers.hasOwnProperty('x-access-token'));
-                assert.ok(res.headers.autorization);
+                assert.ok(res.headers.authorization);
 
                 var results;
                 assert.doesNotThrow(function (){
