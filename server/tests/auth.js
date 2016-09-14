@@ -105,7 +105,7 @@ module.exports = function (User) {
                 });
         });
 
-        it('should return error because the user is not found', function (done) {
+        it('should return error because the user was not found', function (done) {
             var url = URL_ROOT + '/verifyJWT';
             var token = "Wrong-Token";
 
