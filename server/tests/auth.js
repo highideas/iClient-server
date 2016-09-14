@@ -30,7 +30,7 @@ describe('Auth API', function () {
         });
     });
 
-    it('return all users', function (done) {
+    it('verify authentication and if has authorization', function (done) {
         var url = URL_ROOT + '/authenticate';
 
         superagent.post(url)
@@ -39,16 +39,17 @@ describe('Auth API', function () {
                 'password' : '12345678'
             })
             .end(function (error, res) {
-            console.log(error, res);
                 assert.ifError(error);
                 assert.equal(res.status, status.OK);
+                assert.ok(res.headers.hasOwnProperty('x-access-token'));
+                assert.ok(res.headers.autorization);
 
                 var results;
                 assert.doesNotThrow(function (){
                     results = JSON.parse(res.text);
                 });
 
-                assert.equal(results.length, 3);
+                assert.ok(results.token);
                 done();
         });
 

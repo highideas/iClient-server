@@ -25,12 +25,11 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.set('superSecret', Config.secret);
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use('/api/v1', rootRequire('api/v1/api')(wagner));
+rootRequire('auth')(wagner, app, Config);
+app.use('/api/v1', rootRequire('api/v1/api')(wagner, Config));
 
 app.listen(3000);
 console.log('Listening on port 3000!');

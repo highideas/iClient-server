@@ -1,7 +1,7 @@
 var status = require('http-status');
 var jwt    = require('jsonwebtoken');
 
-module.exports = function (wagner, api) {
+module.exports = function (wagner, api, Config) {
     
     api.post('/authenticate', wagner.invoke(function (User) {
         return function (req, res) {
@@ -19,11 +19,12 @@ module.exports = function (wagner, api) {
                     if (user.password != req.body.password) {
                         return res.json({ success: false, message: 'Authentication failed. Wrong password.' });
                     }
-                    
-                    var token = jwt.sign(user, api.get('superSecret'), {
-                        expiresInMinutes: 1440 // expires in 24 hours
-                    });
-                    // return the information including token as JSON
+                    var token = jwt.sign(user, Config.secret);
+                    var autorization = 'Bearer ' + token;
+
+                    res.header('Autorization', autorization);
+                    res.header("x-access-token", token);
+
                     return res.json({
                         success: true,
                         message: 'Enjoy your token!',

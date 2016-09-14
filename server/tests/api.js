@@ -35,8 +35,11 @@ describe("Tests API", function() {
 
     before(function () {
         var app = express();
-        app.set('superSecret', config.secret);
-        app.use(rootRequire('api/v1/api')(wagner));
+        app.use(bodyparser.json());
+
+        rootRequire('auth')(wagner, app, config);
+        app.use(rootRequire('api/v1/api')(wagner, config));
+
         server = app.listen(3001);
     });
 
