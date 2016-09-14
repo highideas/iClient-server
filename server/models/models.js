@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var _ = require('underscore');
 
 module.exports = function (wagner, Config) {
+
     var urlMongo =   Config.host + ':' + 
                 Config.port + '/' + 
                 Config.database;
@@ -19,7 +20,8 @@ module.exports = function (wagner, Config) {
     var models = {
         User : User,
         Client : Client,
-        Visit : Visit
+        Visit : Visit,
+        Config: Config
     };
 
      _.each(models, function(value, key) {

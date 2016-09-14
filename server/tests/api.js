@@ -19,11 +19,11 @@ describe("Tests API", function() {
             "host" : "mongodb://localhost",
             "port" : "27017",
             "database" : "iclient_test",
-            "secret" : "Keysecret"
+            "secret" : "Keysecret-Teste"
         };
 
     var models = rootRequire('models/models')(wagner, config);
-    var deps = wagner.invoke(function(Client, User) {
+    var deps = wagner.invoke(function(Client, User, Config) {
         return {
             Client : Client,
             User : User

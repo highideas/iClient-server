@@ -18,5 +18,19 @@ var userSchema = {
     }
 };
 
-module.exports = new mongoose.Schema(userSchema, { timestamps : true});
+schema = new mongoose.Schema(userSchema, { timestamps : true});
+
+schema.virtual('attributes').get(function(){
+    return {
+        '_id'       : this._id,
+        'username'  : this.username,
+        'email'     : this.email
+    };
+});
+
+schema.set('toObject', {virtuals : true});
+schema.set('toJSON', {virtuals: true});
+
+
+module.exports = schema;
 module.exports.userSchema = userSchema;

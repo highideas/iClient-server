@@ -1,6 +1,8 @@
 var status = require('http-status');
 var jwt    = require('jsonwebtoken');
 
+var verifyJWT = rootRequire('middleware/verifyJWT');
+
 module.exports = function (wagner, api, Config) {
     
     api.post('/authenticate', wagner.invoke(function (User) {
@@ -17,22 +19,26 @@ module.exports = function (wagner, api, Config) {
                     }
 
                     if (user.password != req.body.password) {
-                        return res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+                        return res.json({ success: false, message: 'Authentication failed. Login incorrect' });
                     }
-                    var token = jwt.sign(user, Config.secret);
-                    var authorization = 'Bearer ' + token;
 
-                    res.header('Authorization', authorization);
+                    var token = jwt.sign(user.attributes, Config.secret);
+
+                    res.header('Authorization', token);
                     res.header("x-access-token", token);
 
                     return res.json({
-                        success: true,
+                        success: status.OK,
                         message: 'Enjoy your token!',
                         token: token
                     });
                 });
         };
     }));
+
+    api.get('/verifyJWT', verifyJWT, function (req, res) {
+        return res.status(status.OK).json({success: status.OK, });
+    });
 
     return api;
 };
