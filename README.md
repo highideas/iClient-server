@@ -1,6 +1,6 @@
 # IClient
 
- Application in for visits of customers
+ Simple application to mark visit to clients.
 
 ### Tech
 
