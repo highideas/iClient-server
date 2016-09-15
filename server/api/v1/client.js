@@ -1,8 +1,11 @@
 var status = require('http-status');
+var wagner = require('wagner-core');
 
-module.exports = function (wagner, api) {
+var verifyJWT = rootRequire('middleware/verifyJWT');
 
-    api.get('/client', wagner.invoke(function (Client) {
+module.exports = function (api) {
+
+    api.get('/client', verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
             Client.find({}, function (error, clients) {
                 if (error) {
@@ -21,7 +24,7 @@ module.exports = function (wagner, api) {
         };
     }));
 
-    api.get('/client/name/:name', wagner.invoke(function (Client) {
+    api.get('/client/name/:name', verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
             var data = {
                 'name' : req.params.name.toLowerCase()
@@ -43,7 +46,7 @@ module.exports = function (wagner, api) {
         };
     }));
 
-    api.post('/client', wagner.invoke(function (Client) {
+    api.post('/client', verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
             Client.create(req.body, function (error, client) {
                 if (error) {
@@ -57,7 +60,7 @@ module.exports = function (wagner, api) {
         };
     }));
 
-    api.put('/client/id/:id', wagner.invoke(function (Client) {
+    api.put('/client/id/:id', verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
             var query = {'_id' : req.params.id};
             Client.update(query, { $set : req.body}, {}, function (error, client) {
@@ -72,7 +75,7 @@ module.exports = function (wagner, api) {
         };
     }));
 
-    api.delete('/client/id/:id', wagner.invoke(function (Client) {
+    api.delete('/client/id/:id', verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
             var query = {'_id' : req.params.id};
             Client.remove(query, function (error) {

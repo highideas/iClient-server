@@ -1,11 +1,12 @@
 var status = require('http-status');
 var jwt    = require('jsonwebtoken');
+var wagner = require('wagner-core');
 
 var verifyJWT = rootRequire('middleware/verifyJWT');
 
-module.exports = function (wagner, api, Config) {
+module.exports = function (api) {
     
-    api.post('/authenticate', wagner.invoke(function (User) {
+    api.post('/authenticate', wagner.invoke(function (User, Config) {
         return function (req, res) {
             User.findOne({'username' : req.body.username })
                 .exec(function (error, user) {

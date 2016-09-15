@@ -7,11 +7,21 @@ var wagner = require('wagner-core');
 
 var URL_ROOT = 'http://localhost:3001';
 
-module.exports = function (User) {
-
-    var User = User;
-
+module.exports = function () {
     describe('Auth API', function () {
+
+        var User;
+        var Config;
+
+        before(function (done) {
+            User = wagner.invoke(function(User) {
+                return User;
+            });
+            Config = wagner.invoke(function(Config) {
+                return Config;
+            });
+            done();
+        });
 
         beforeEach(function (done) {
             User.remove({}, function (error) {
@@ -66,10 +76,6 @@ module.exports = function (User) {
                 'email' : 'gabriel@teste.com',
             };
 
-            var Config = wagner.invoke(function(Config) {
-                return Config;
-            });
-
             var token = jwt.sign(user, Config.secret);
 
             superagent.get(url)
@@ -114,10 +120,6 @@ module.exports = function (User) {
                 'email' : 'visit@teste.com',
             };
 
-            var Config = wagner.invoke(function(Config) {
-                return Config;
-            });
-
             var token = jwt.sign(user, Config.secret);
 
             superagent.get(url)
@@ -138,10 +140,6 @@ module.exports = function (User) {
                 'username' : 'User Not Registred',
                 'email' : 'visit@teste.com',
             };
-
-            var Config = wagner.invoke(function(Config) {
-                return Config;
-            });
 
             var token = jwt.sign(user, Config.secret);
 
