@@ -24,12 +24,9 @@ module.exports = function (api) {
         };
     }));
 
-    api.get('/client/name/:name', verifyJWT, wagner.invoke(function (Client) {
+    api.get('/client/search', verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
-            var data = {
-                'name' : req.params.name.toLowerCase()
-            };
-            Client.find(data).exec(function (error, client) {
+            Client.find(req.query).exec(function (error, client) {
                 if (error) {
                     return res.
                         status(status.INTERNAL_SERVER_ERROR).
@@ -60,7 +57,7 @@ module.exports = function (api) {
         };
     }));
 
-    api.put('/client/id/:id', verifyJWT, wagner.invoke(function (Client) {
+    api.put('/client/:id', verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
             var query = {'_id' : req.params.id};
             Client.update(query, { $set : req.body}, {}, function (error, client) {
@@ -75,7 +72,7 @@ module.exports = function (api) {
         };
     }));
 
-    api.delete('/client/id/:id', verifyJWT, wagner.invoke(function (Client) {
+    api.delete('/client/:id', verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
             var query = {'_id' : req.params.id};
             Client.remove(query, function (error) {

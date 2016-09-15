@@ -30,7 +30,6 @@ module.exports = function (api) {
 
                     return res.json({
                         success: status.OK,
-                        message: 'Enjoy your token!',
                         token: token
                     });
                 });

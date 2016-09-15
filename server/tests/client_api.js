@@ -14,6 +14,7 @@ module.exports = function () {
         var User;
         var Config;
         var user;
+        var token;
 
         before(function (done) {
             Client = wagner.invoke(function(Client) {
@@ -57,7 +58,7 @@ module.exports = function () {
                 "_id" : '000000000000000000000002',
                 "name" : "Gonçalves",
                 "address" : "Street 32",
-                "city"  : "Madrid"
+                "city"  : "London"
                 },
             ];
 
@@ -72,6 +73,7 @@ module.exports = function () {
                 assert.ifError(err);
                 User.create(createUser, function (err) {
                     assert.ifError(err);
+                    token = jwt.sign(user, Config.secret);
                     done();
                 });
             });
@@ -79,8 +81,6 @@ module.exports = function () {
 
         it('return all clients', function (done) {
             var url = URL_ROOT + '/client';
-
-            var token = jwt.sign(user, Config.secret);
 
             superagent.get(url)
                 .set('Authorization', token)
@@ -111,8 +111,7 @@ module.exports = function () {
         });
 
         it('return a client by name', function (done) {
-            var url = URL_ROOT + '/client/name/Gabriel';
-            var token = jwt.sign(user, Config.secret);
+            var url = URL_ROOT + '/client/search?name=gabriel';
 
             superagent.get(url)
                 .set('Authorization', token)
@@ -124,7 +123,6 @@ module.exports = function () {
                     assert.doesNotThrow(function (){
                         results = JSON.parse(res.text).client;
                     });
-
                     assert.equal(results.length, 1);
                     assert.equal(results[0].name, "gabriel");
                     done();
@@ -132,7 +130,7 @@ module.exports = function () {
         });
 
         it('should not return a client by name because don\'t have a token', function (done) {
-            var url = URL_ROOT + '/client/name/Gabriel';
+            var url = URL_ROOT + '/client/search?name=gabriel';
 
             superagent.get(url)
                 .end(function (error, res) {
@@ -143,9 +141,45 @@ module.exports = function () {
                 });
         });
 
+        it('return a client by address', function (done) {
+            var url = URL_ROOT + '/client/search?address=Street 23';
+
+            superagent.get(url)
+                .set('Authorization', token)
+                .end(function (error, res) {
+                    assert.ifError(error);
+                    assert.equal(res.status, status.OK);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).client;
+                    });
+                    assert.equal(results.length, 1);
+                    assert.equal(results[0].name, "gabriel");
+                    done();
+                });
+        });
+
+        it('return all clients by city', function (done) {
+            var url = URL_ROOT + '/client/search?city=London';
+
+            superagent.get(url)
+                .set('Authorization', token)
+                .end(function (error, res) {
+                    assert.ifError(error);
+                    assert.equal(res.status, status.OK);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).client;
+                    });
+                    assert.equal(results.length, 2);
+                    assert.equal(results[0].city, "London");
+                    done();
+                });
+        });
         it('can create a Client', function (done) {
             var url = URL_ROOT + '/client/';
-            var token = jwt.sign(user, Config.secret);
 
             superagent.post(url)
                 .set('Authorization', token)
@@ -184,7 +218,6 @@ module.exports = function () {
 
         it('can\'t create a Client invalid', function (done) {
             var url = URL_ROOT + '/client/';
-            var token = jwt.sign(user, Config.secret);
 
             superagent.post(url)
                 .set('Authorization', token)
@@ -205,8 +238,7 @@ module.exports = function () {
         });
 
          it('can update a Client', function (done) {
-            var url = URL_ROOT + '/client/id/000000000000000000000001';
-            var token = jwt.sign(user, Config.secret);
+            var url = URL_ROOT + '/client/000000000000000000000001';
 
             superagent.put(url)
                 .set('Authorization', token)
@@ -229,7 +261,7 @@ module.exports = function () {
         });
 
         it('can\'t update a Client because don\'t have a token', function (done) {
-            var url = URL_ROOT + '/client/id/000000000000000000000001';
+            var url = URL_ROOT + '/client/000000000000000000000001';
 
             superagent.put(url)
                 .send({
@@ -244,8 +276,7 @@ module.exports = function () {
         });
 
         it('can delete a Client', function (done) {
-            var url = URL_ROOT + '/client/id/000000000000000000000001';
-            var token = jwt.sign(user, Config.secret);
+            var url = URL_ROOT + '/client/000000000000000000000001';
 
             superagent.del(url)
                 .set('Authorization', token)
@@ -262,7 +293,7 @@ module.exports = function () {
         });
 
         it('can\'t delete a Client because don\'t have a token', function (done) {
-            var url = URL_ROOT + '/client/id/000000000000000000000001';
+            var url = URL_ROOT + '/client/000000000000000000000001';
 
             superagent.del(url)
                 .end(function (error, res) {

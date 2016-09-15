@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 var _ = require('underscore');
+var wagner = require('wagner-core');
 
-module.exports = function (wagner, Config) {
+module.exports = function (Config) {
 
     var urlMongo =   Config.host + ':' + 
                 Config.port + '/' + 

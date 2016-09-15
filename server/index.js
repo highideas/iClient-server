@@ -8,7 +8,7 @@ var bodyParser  = require('body-parser')
 var Config = rootRequire('config');
 var jwt    = require('jsonwebtoken');
 
-rootRequire('models/models')(wagner, Config);
+rootRequire('models/models')(Config);
 
 var app = express();
 

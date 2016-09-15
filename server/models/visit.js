@@ -1,8 +1,10 @@
 var mongoose = require('mongoose');
 var Client = require('./client');
+var User = require('./user');
 
 var visitSchema = {
-    client : Client.clientSchema,
+    client  : Client.clientSchema,
+    user    : User.userSchema,
     visit_date : {
         type : Date,
         required: true

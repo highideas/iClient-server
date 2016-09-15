@@ -19,7 +19,7 @@ describe("Tests API", function() {
         "secret" : "Keysecret-Teste"
     };
 
-    var models = rootRequire('models/models')(wagner, config);
+    var models = rootRequire('models/models')(config);
 
     before(function () {
         var app = express();
@@ -37,4 +37,5 @@ describe("Tests API", function() {
 
     rootRequire('/tests/auth')();
     rootRequire('/tests/client_api')();
+    rootRequire('/tests/visit_api')();
 });
