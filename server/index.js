@@ -4,7 +4,7 @@ global.rootRequire = function(name) {
 
 var express = require("express");
 var wagner = require("wagner-core");
-var bodyParser  = require("body-parser")
+var bodyParser  = require("body-parser");
 var Config = rootRequire("config");
 var jwt    = require("jsonwebtoken");
 

@@ -67,7 +67,7 @@ module.exports = function () {
                 "username" : "Gabriel",
                 "email" : "gabriel@teste.com",
                 "password" : "12345678"
-            }
+            };
 
             Client.create(clients, function (err) {
                 assert.ifError(err);
