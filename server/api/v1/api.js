@@ -10,6 +10,7 @@ module.exports = function () {
     app.use(bodyparser.json());
 
     app = rootRequire("/api/v1/client")(app);
+    app = rootRequire("/api/v1/visit")(app);
     
     return app;
 };

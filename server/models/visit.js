@@ -2,9 +2,18 @@ var mongoose = require("mongoose");
 var Client = require("./client");
 var User = require("./user");
 
+var Schema = mongoose.Schema;
+var Types = Schema.Types;
+
 var visitSchema = {
-    client  : Client.clientSchema,
-    user    : User.userSchema,
+    client  : {
+        type: Types.Object,
+        ref:  'Client'
+    },
+    user    : {
+        type: Types.Object,
+        ref: 'User'
+    },
     visit_date : {
         type : Date,
         required: true
@@ -19,5 +28,7 @@ var visitSchema = {
     }
 };
 
-module.exports = new mongoose.Schema(visitSchema);
+var schema = new mongoose.Schema(visitSchema);
+
+module.exports = schema;
 module.exports.visitSchema = visitSchema;
