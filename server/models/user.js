@@ -1,10 +1,9 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var userSchema = {
     username : {
         type: String,
         required: true,
-        lowercase: true
     },
     email : {
         type: String,
@@ -18,18 +17,18 @@ var userSchema = {
     }
 };
 
-schema = new mongoose.Schema(userSchema, { timestamps : true});
+var schema = new mongoose.Schema(userSchema, { timestamps : true});
 
-schema.virtual('attributes').get(function(){
+schema.virtual("attributes").get(function(){
     return {
-        '_id'       : this._id,
-        'username'  : this.username,
-        'email'     : this.email
+        "_id"       : this._id,
+        "username"  : this.username,
+        "email"     : this.email
     };
 });
 
-schema.set('toObject', {virtuals : true});
-schema.set('toJSON', {virtuals: true});
+schema.set("toObject", {virtuals : true});
+schema.set("toJSON", {virtuals: true});
 
 
 module.exports = schema;

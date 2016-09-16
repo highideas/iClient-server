@@ -1,11 +1,11 @@
-var status = require('http-status');
-var wagner = require('wagner-core');
+var status = require("http-status");
+var wagner = require("wagner-core");
 
-var verifyJWT = rootRequire('middleware/verifyJWT');
+var verifyJWT = rootRequire("middleware/verifyJWT");
 
 module.exports = function (api) {
 
-    api.get('/client', verifyJWT, wagner.invoke(function (Client) {
+    api.get("/client", verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
             Client.find({}, function (error, clients) {
                 if (error) {
@@ -16,7 +16,7 @@ module.exports = function (api) {
                 if (!clients) {
                     return res.
                         status(status.NOT_FOUND).
-                        json({ error: 'Not Found'});
+                        json({ error: "Not Found"});
                 }
 
                 res.json({ clients: clients});
@@ -24,7 +24,7 @@ module.exports = function (api) {
         };
     }));
 
-    api.get('/client/search', verifyJWT, wagner.invoke(function (Client) {
+    api.get("/client/search", verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
             Client.find(req.query).exec(function (error, client) {
                 if (error) {
@@ -35,7 +35,7 @@ module.exports = function (api) {
                 if (!client) {
                     return res.
                         status(status.NOT_FOUND).
-                        json({ error: 'Not Found'});
+                        json({ error: "Not Found"});
                 }
 
                 res.json({ client: client});
@@ -43,7 +43,7 @@ module.exports = function (api) {
         };
     }));
 
-    api.post('/client', verifyJWT, wagner.invoke(function (Client) {
+    api.post("/client", verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
             Client.create(req.body, function (error, client) {
                 if (error) {
@@ -57,9 +57,9 @@ module.exports = function (api) {
         };
     }));
 
-    api.put('/client/:id', verifyJWT, wagner.invoke(function (Client) {
+    api.put("/client/:id", verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
-            var query = {'_id' : req.params.id};
+            var query = {"_id" : req.params.id};
             Client.update(query, { $set : req.body}, {}, function (error, client) {
                 if (error) {
                     return res.
@@ -72,9 +72,9 @@ module.exports = function (api) {
         };
     }));
 
-    api.delete('/client/:id', verifyJWT, wagner.invoke(function (Client) {
+    api.delete("/client/:id", verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
-            var query = {'_id' : req.params.id};
+            var query = {"_id" : req.params.id};
             Client.remove(query, function (error) {
                 if (error) {
                     return res.

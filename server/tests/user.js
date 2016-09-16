@@ -1,17 +1,17 @@
-var assert = require('assert');
-var mongoose = require('mongoose');
+var assert = require("assert");
+var mongoose = require("mongoose");
 
-var userSchema = require('../models/user');
+var userSchema = require("../models/user");
 
-describe('User Schema Tests', function () {
-    var User = mongoose.model('User', userSchema, 'users');
+describe("User Schema Tests", function () {
+    var User = mongoose.model("User", userSchema, "users");
 
-    it('has a username field that\' required string', function () {
+    it("has a username field that's required string", function (done) {
         var user = new User({});
         user.validate(function (err) {
             assert.ok(err);
 
-            assert.equal(err.errors['username'].kind, 'required');
+            assert.equal(err.errors["username"].kind, "required");
 
             user.username = "Gabriel";
             assert.equal(user.username, "Gabriel");
@@ -19,12 +19,12 @@ describe('User Schema Tests', function () {
         });
     });
 
-    it('has a email field that\' required string', function () {
+    it("has a email field that's required string", function (done) {
         var user = new User({});
         user.validate(function (err) {
             assert.ok(err);
 
-            assert.equal(err.errors['email'].kind, 'required');
+            assert.equal(err.errors["email"].kind, "required");
 
             user.email = "contato@gabrielgoncalves.com.br";
             assert.equal(user.email, "contato@gabrielgoncalves.com.br");
@@ -32,12 +32,12 @@ describe('User Schema Tests', function () {
         });
     });
 
-    it('has a password field that\' required string', function () {
+    it("has a password field that's required string", function (done) {
         var user = new User({});
         user.validate(function (err) {
             assert.ok(err);
 
-            assert.equal(err.errors['password'].kind, 'required');
+            assert.equal(err.errors["password"].kind, "required");
 
             user.password = "123456";
             assert.equal(user.password, "123456");

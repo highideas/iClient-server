@@ -1,6 +1,6 @@
-var mongoose = require('mongoose');
-var Client = require('./client');
-var User = require('./user');
+var mongoose = require("mongoose");
+var Client = require("./client");
+var User = require("./user");
 
 var visitSchema = {
     client  : Client.clientSchema,

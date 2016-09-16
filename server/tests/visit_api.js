@@ -1,33 +1,120 @@
-var assert = require('assert');
-var superagent = require('superagent');
-var status = require('http-status');
-var bodyparser = require('body-parser');
-var wagner = require('wagner-core');
-var jwt    = require('jsonwebtoken');
+var assert = require("assert");
+var superagent = require("superagent");
+var status = require("http-status");
+var bodyparser = require("body-parser");
+var wagner = require("wagner-core");
+var jwt    = require("jsonwebtoken");
 
-var URL_ROOT = 'http://localhost:3001';
+var URL_ROOT = "http://localhost:3001";
 
 module.exports = function () {
 
-    describe('Visit API', function () {
+    describe("Visit API", function () {
+        var Client;
+        var User;
+        var Config;
+        var Visit;
+        var user;
+        var token;
 
-        it('should not show all visits because isn\'t authenticate', function (done) {
-            var url = URL_ROOT + '/visit';
+        before(function (done) {
+            Client = wagner.invoke(function(Client) {
+                return Client;
+            });
+            User = wagner.invoke(function(User) {
+                return User;
+            });
+            Config = wagner.invoke(function(Config) {
+                return Config;
+            });
+
+            Visit = wagner.invoke(function(Visit) {
+                return Visit;
+            });
+
+            user = {
+                "_id" : "000000000000000000000001",
+                "username" : "Gabriel",
+                "email" : "gabriel@teste.com",
+            };
+
+            done();
+        });
+
+        beforeEach(function (done) {
+            Visit.remove({}, function (error) {
+                assert.ifError(error);
+                Client.remove({}, function (error) {
+                    assert.ifError(error);
+                    User.remove({}, function (error) {
+                        assert.ifError(error);
+                        done();
+                    });
+                });
+            });
+        });
+
+        beforeEach(function (done) {
+            var clients = [
+                {
+                "_id" : "000000000000000000000001",
+                "name" : "Gabriel",
+                "address" : "Street 23",
+                "city"  : "London"
+                },
+                {
+                "_id" : "000000000000000000000002",
+                "name" : "Gonçalves",
+                "address" : "Street 32",
+                "city"  : "London"
+                },
+            ];
+
+            var createUser = {
+                "_id" : "000000000000000000000001",
+                "username" : "Gabriel",
+                "email" : "gabriel@teste.com",
+                "password" : "12345678"
+            };
+
+            var createVisits = {
+                "client" : clients[0],
+                "user"  :   createUser,
+                "visit_date" : new Date,
+                "sales_quantity" : 100,
+                "value_received" : 250
+            };
+
+            Client.create(clients, function (err) {
+                assert.ifError(err);
+                User.create(createUser, function (err) {
+                    assert.ifError(err);
+                    Visit.create(createVisits, function (err) {
+                        assert.ifError(err);
+                        token = jwt.sign(user, Config.secret);
+                        done();
+                    });
+                });
+            });
+        });
+
+        it("should not show all visits because isn't authenticate", function (done) {
+            var url = URL_ROOT + "/visit";
 
             superagent.get(url)
                 .end(function (error, res) {
                     assert.ok(error);
                     assert.equal(res.status, status.UNAUTHORIZED);
-                    assert.equal(res.body.message, 'Token not found');
+                    assert.equal(res.body.message, "Token not found");
                     done();
                 });
         });
 
-        it('should show all visits', function (done) {
-            var url = URL_ROOT + '/visit';
+        it("should show all visits", function (done) {
+            var url = URL_ROOT + "/visit";
 
             superagent.get(url)
-                .set('Authorization', token)
+                .set("Authorization", token)
                 .end(function (error, res) {
                     assert.ifError(error);
                     assert.equal(res.status, status.OK);
@@ -43,11 +130,11 @@ module.exports = function () {
                 });
         });
 
-        it('should return all visits of client selected by id', function (done) {
-            var url = URL_ROOT + '/visit/search?client=000000000000000000000001';
+        it("should return all visits of client selected by id", function (done) {
+            var url = URL_ROOT + "/visit/search?client=000000000000000000000001";
 
             superagent.get(url)
-                .set('Authorization', token)
+                .set("Authorization", token)
                 .end(function (error, res) {
                     assert.ifError(error);
                     assert.equal(res.status, status.OK);
@@ -62,11 +149,11 @@ module.exports = function () {
                 });
         });
 
-        it('should return all visits of client selected by id ordered by date of last visit', function (done) {
-            var url = URL_ROOT + '/visit/search?client=000000000000000000000001&lastVisit=1';
+        it("should return all visits of client selected by id ordered by date of last visit", function (done) {
+            var url = URL_ROOT + "/visit/search?client=000000000000000000000001&lastVisit=1";
 
             superagent.get(url)
-                .set('Authorization', token)
+                .set("Authorization", token)
                 .end(function (error, res) {
                     assert.ifError(error);
                     assert.equal(res.status, status.OK);
@@ -82,11 +169,11 @@ module.exports = function () {
                 });
         });
 
-        it('can create a Visit', function (done) {
-            var url = URL_ROOT + '/visit';
+        it("can create a Visit", function (done) {
+            var url = URL_ROOT + "/visit";
 
             superagent.post(url)
-                .set('Authorization', token)
+                .set("Authorization", token)
                 .send({
                     //Data of visit to be created
                 })
@@ -100,8 +187,8 @@ module.exports = function () {
                     });
                 });
         });
-        it('can\'t create a Visit because don\'t have a token', function (done) {
-            var url = URL_ROOT + '/visit/';
+        it("can't create a Visit because don't have a token", function (done) {
+            var url = URL_ROOT + "/visit/";
 
             superagent.post(url)
                 .send({
@@ -110,7 +197,7 @@ module.exports = function () {
                 .end(function (error, res) {
                     assert.ok(error);
                     assert.equal(res.status, status.UNAUTHORIZED);
-                    assert.equal(res.body.message, 'Token not found');
+                    assert.equal(res.body.message, "Token not found");
                     done();
                 });
         });

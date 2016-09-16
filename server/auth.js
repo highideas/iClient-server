@@ -19,7 +19,7 @@ module.exports = function (api) {
                         return res.json({ success: false, message: 'Authentication failed. User not found.' });
                     }
 
-                    if (user.password != req.body.password) {
+                    if (user.password !== req.body.password) {
                         return res.json({ success: false, message: 'Authentication failed. Login incorrect' });
                     }
 
