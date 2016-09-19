@@ -3,3 +3,4 @@ node_js:
     - "4.1"
 before_script:
     - cd server/
+    - npm install
