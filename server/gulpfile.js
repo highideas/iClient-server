@@ -4,7 +4,7 @@ var mocha = require("gulp-mocha");
 gulp.task("test", function(){
     var error = false;
     gulp.
-        src("./tests/*js").
+        src("./test/*js").
         pipe(mocha()).
         on("error", function(){
             error = true;
@@ -17,6 +17,6 @@ gulp.task("test", function(){
 });
 
 gulp.task("watch", function(){
-    gulp.watch(["./tests/*.js"], ["test"]);
+    gulp.watch(["./test/*.js"], ["test"]);
 });
 

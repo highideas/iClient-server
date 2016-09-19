@@ -1,7 +1,11 @@
 {
+  "name" : "IClient",
+  "author" : "Gabriel Gonçalves <contato@gabrieldeveloper.com.br>",
+  "description" : "Simple application to mark visit to clients.",
   "scripts": {
     "test": "mocha tests",
-    "watch": "gulp watch"
+    "watch": "gulp watch",
+    "coverage" : "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha"
   },
   "dependencies": {
     "body-parser": "1.12.4",
@@ -19,6 +23,7 @@
   "devDependencies": {
     "gulp": "3.8.11",
     "gulp-mocha": "2.0.1",
+    "istanbul": "^0.4.5",
     "mocha": "2.2.4"
   }
 }
