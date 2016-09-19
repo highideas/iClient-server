@@ -27,13 +27,8 @@ module.exports = function (api) {
 
     api.get("/visit/search", verifyJWT, wagner.invoke(function (Visit) {
         return function (req, res) {
-            var query = Visit.acceptable_params_filter(req.query);
-            var sort = {};
-            if (req.query.lastVisit == 1) {
-                sort = {"visit_date" : -1 };
-            }
 
-            Visit.find(query).sort(sort).exec(function (error, visits) {
+            Visit.search(req.query, function (error, visits) {
                 if (error) {
                     return res.
                         status(status.INTERNAL_SERVER_ERROR).
@@ -45,9 +40,54 @@ module.exports = function (api) {
                         json({ error: "Not Found"});
                 }
 
-                res.json({ visits : visits});
+                return res.json({ visits : visits});
+
             });
         };
     }));
+
+    api.post("/visit", verifyJWT, wagner.invoke(function (Visit) {
+        return function (req, res) {
+            Visit.create(req.body, function (error, visit) {
+                if (error) {
+                    return res.
+                        status(status.INTERNAL_SERVER_ERROR).
+                        json({ error: error.toString()});
+                }
+
+                return res.json({ visit: visit });
+            });
+        };
+    }));
+
+    api.put("/visit/:id", verifyJWT, wagner.invoke(function (Visit) {
+        return function (req, res) {
+            var query = {"_id" : req.params.id};
+            Visit.update(query, { $set : req.body}, {}, function (error, visit) {
+                if (error) {
+                    return res.
+                        status(status.INTERNAL_SERVER_ERROR).
+                        json({ error: error.toString()});
+                }
+
+                return res.json({ visit: visit});
+            });
+        };
+    }));
+
+    api.delete("/visit/:id", verifyJWT, wagner.invoke(function (Visit) {
+        return function (req, res) {
+            var query = {"_id" : req.params.id};
+            Visit.remove(query, function (error) {
+                if (error) {
+                    return res.
+                        status(status.INTERNAL_SERVER_ERROR).
+                        json({ error: error.toString()});
+                }
+                res.json({sucess: status.OK});
+            });
+        };
+    }));
+
     return api;
 };

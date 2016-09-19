@@ -1,7 +1,7 @@
 var assert = require("assert");
 var mongoose = require("mongoose");
 
-var userSchema = require("../models/user");
+var userSchema = require("../schemas/user");
 
 describe("User Schema Tests", function () {
     var User = mongoose.model("User", userSchema, "users");

@@ -1,7 +1,7 @@
 var assert = require("assert");
 var mongoose = require("mongoose");
 
-var visitSchema = require("../models/visit");
+var visitSchema = require("../schemas/visit");
 
 describe("Visit Schema Tests", function () {
     var Visit = mongoose.model("Visit", visitSchema, "visits");

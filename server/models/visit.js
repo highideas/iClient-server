@@ -1,34 +1,35 @@
 var mongoose = require("mongoose");
-var Client = require("./client");
-var User = require("./user");
 
-var Schema = mongoose.Schema;
-var Types = Schema.Types;
+var Visit = mongoose.model("Visit", rootRequire("schemas/visit"), "visits");
 
-var visitSchema = {
-    client  : {
-        type: Types.Object,
-        ref:  'Client'
-    },
-    user    : {
-        type: Types.Object,
-        ref: 'User'
-    },
-    visit_date : {
-        type : Date,
-        required: true
-    },
-    sales_quantity : {
-        type: Number,
-        required: true
-    },
-    value_received : {
-        type: Number,
-        required: true
+Visit.search = function(params, callback) {
+    var sort = {};
+
+    if (params.lastVisit == 1) {
+        sort = {"visit_date" : -1 };
     }
-};
 
-var schema = new mongoose.Schema(visitSchema);
+    var query = Visit.acceptable_params_filter(params);
 
-module.exports = schema;
-module.exports.visitSchema = visitSchema;
+    Visit.find(query)
+        .sort(sort)
+        .then(function(visit) {
+            callback(null, visit);
+        });
+}
+
+Visit.acceptable_params_filter = function(params) {
+
+    var acceptable = ["client", "user"];
+    var _query = {};
+
+    Object.keys(params).forEach(function(key) {
+        if (acceptable.indexOf(key) !== -1) {
+            _query[key + "._id"] =  new mongoose.Types.ObjectId(params[key]);
+        }
+    });
+    // retorno o 'res.query' só com as chaves aceitas
+    return _query;
+}
+
+module.exports = Visit;

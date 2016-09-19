@@ -14,7 +14,10 @@ module.exports = function () {
         var User;
         var Config;
         var Visit;
+
         var user;
+        var visits;
+        var clients;
         var token;
 
         before(function (done) {
@@ -31,12 +34,6 @@ module.exports = function () {
             Visit = wagner.invoke(function(Visit) {
                 return Visit;
             });
-
-            user = {
-                "_id" : "000000000000000000000001",
-                "username" : "Gabriel",
-                "email" : "gabriel@teste.com",
-            };
 
             done();
         });
@@ -55,15 +52,13 @@ module.exports = function () {
         });
 
         beforeEach(function (done) {
-            var clients = [
+            var createClients = [
                 {
-                "_id" : "000000000000000000000001",
                 "name" : "Gabriel",
                 "address" : "Street 23",
                 "city"  : "London"
                 },
                 {
-                "_id" : "000000000000000000000002",
                 "name" : "Gonçalves",
                 "address" : "Street 32",
                 "city"  : "London"
@@ -71,46 +66,52 @@ module.exports = function () {
             ];
 
             var createUser = {
-                "_id" : "000000000000000000000001",
                 "username" : "Gabriel",
                 "email" : "gabriel@teste.com",
                 "password" : "12345678"
             };
 
             var today = new Date;
-            var tomorrow = new Date(today.getTime() + 86400000);
+            var tomorrow = new Date(today.getTime() + 90000000);
 
             var createVisits = [
                 {
-                    "client" : clients[0],
                     "visit_date" : today,
                     "sales_quantity" : 100,
                     "value_received" : 250
                 },
                 {
-                    "client" : clients[1],
                     "visit_date" : today,
                     "sales_quantity" : 100,
                     "value_received" : 250
                 },
                 {
-                    "client" : clients[0],
                     "visit_date" : tomorrow,
                     "sales_quantity" : 100,
                     "value_received" : 250
                 },
 
             ];
-            Client.create(clients, function (err, clients) {
+
+            Client.create(createClients, function (err, clientsCreated) {
                 assert.ifError(err);
-                User.create(createUser, function (err, user) {
+                clients = clientsCreated;
+                User.create(createUser, function (err, userCreated) {
                     assert.ifError(err);
-                    var visitCreates = [];
-                    createVisits.forEach(function (visits) {
-                        visits.user = user;
-                        visitCreates.push(visits);
-                    });
-                    Visit.create(visitCreates, function (err, visits) {
+
+                    user = userCreated;
+
+                    createVisits[0].client  = clientsCreated[0];
+                    createVisits[0].user    = userCreated;
+
+                    createVisits[1].client  = clientsCreated[1];
+                    createVisits[1].user    = userCreated;
+
+                    createVisits[2].client  = clientsCreated[0];
+                    createVisits[2].user    = userCreated;
+
+                    Visit.create(createVisits, function (err, visitsCreated) {
+                        visits = visitsCreated;
                         assert.ifError(err);
                         token = jwt.sign(user.attributes, Config.secret);
                         done();
@@ -152,8 +153,7 @@ module.exports = function () {
         });
 
         it("should return all visits of client selected by id", function (done) {
-            var url = URL_ROOT + "/visit/search?client=000000000000000000000001";
-
+            var url = URL_ROOT + "/visit/search?client=" + clients[0]._id;
             superagent.get(url)
                 .set("Authorization", token)
                 .end(function (error, res) {
@@ -164,14 +164,13 @@ module.exports = function () {
                     assert.doesNotThrow(function (){
                         results = JSON.parse(res.text).visits;
                     });
-
                     assert.equal(results.length, 2);
                     done();
-                });
+            });
         });
 
         it("should return all visits of client selected by id ordered by date of last visit", function (done) {
-            var url = URL_ROOT + "/visit/search?client=000000000000000000000001&lastVisit=1";
+            var url = URL_ROOT + "/visit/search?client=" + clients[0]._id + "&lastVisit=1";
 
             superagent.get(url)
                 .set("Authorization", token)
@@ -183,7 +182,6 @@ module.exports = function () {
                     assert.doesNotThrow(function (){
                         results = JSON.parse(res.text).visits;
                     });
-
                     assert.equal(results.length, 2);
                     assert.ok(results[0].visit_date > results[1].visit_date);
                     done();
@@ -191,7 +189,7 @@ module.exports = function () {
         });
 
         it("should return all visits of user selected by id", function (done) {
-            var url = URL_ROOT + "/visit/search?user=000000000000000000000001";
+            var url = URL_ROOT + "/visit/search?user=" + user._id;
 
             superagent.get(url)
                 .set("Authorization", token)
@@ -210,7 +208,7 @@ module.exports = function () {
         });
 
         it("should return all visits of user selected by id ordered by date of last visit", function (done) {
-            var url = URL_ROOT + "/visit/search?user=000000000000000000000001&lastVisit=1";
+            var url = URL_ROOT + "/visit/search?user=" + user._id + "&lastVisit=1";
 
             superagent.get(url)
                 .set("Authorization", token)
@@ -224,7 +222,7 @@ module.exports = function () {
                     });
 
                     assert.equal(results.length, 3);
-                    assert.ok(results[2].date > results[0].date);
+                    assert.ok(results[0].visit_date > results[2].visit_date);
                     done();
                 });
         });
@@ -233,18 +231,8 @@ module.exports = function () {
             var url = URL_ROOT + "/visit";
 
             var visit = {
-                "client" : {
-                    "_id" : "000000000000000000000001",
-                    "name" : "Gabriel",
-                    "address" : "Street 23",
-                    "city"  : "London"
-                },
-                "user"  :   {
-                    "_id" : "000000000000000000000001",
-                    "username" : "Gabriel",
-                    "email" : "gabriel@teste.com",
-                    "password" : "12345678"
-                },
+                "client" : clients[1],
+                "user"  :  user,
                 "visit_date" : new Date,
                 "sales_quantity" : 100,
                 "value_received" : 250
@@ -258,7 +246,7 @@ module.exports = function () {
                     assert.equal(res.status, status.OK);
                     Visit.find({}, function (error, visits) {
                         assert.ifError(error);
-                        assert.equal(visits.length, 2);
+                        assert.equal(visits.length, 4);
                         done();
                     });
                 });
@@ -278,7 +266,7 @@ module.exports = function () {
         });
 
         it("can update a Visit", function (done) {
-            var url = URL_ROOT + "/visit/000000000000000000000001";
+            var url = URL_ROOT + "/visit/" + visits[0]._id;
 
             var visit = {
                 "sales_quantity" : 200,
@@ -291,7 +279,7 @@ module.exports = function () {
                 .end(function (error, res) {
                     assert.ifError(error);
                     assert.equal(res.status, status.OK);
-                    Visit.find({ "_id" : "000000000000000000000001"}, function (error, visits) {
+                    Visit.find({ "_id" : visits[0]._id}, function (error, visits) {
                         assert.ifError(error);
                         assert.equal(visits.length, 1);
                         assert.equal(visits[0].sales_quantity, 200);
@@ -302,7 +290,7 @@ module.exports = function () {
         });
 
         it("can't update a Visit because don't have a token", function (done) {
-            var url = URL_ROOT + "/visit/";
+            var url = URL_ROOT + "/visit/" + visits[0]._id;
 
             superagent.put(url)
                 .send({})
@@ -315,14 +303,14 @@ module.exports = function () {
         });
 
         it("can delete a Visit", function (done) {
-            var url = URL_ROOT + "/visit/000000000000000000000001";
+            var url = URL_ROOT + "/visit/" + visits[0]._id;
 
             superagent.del(url)
                 .set("Authorization", token)
                 .end(function (error, res) {
                     assert.ifError(error);
                     assert.equal(res.status, status.OK);
-                    Visit.find({"_id" : "000000000000000000000001"}, function (error, visits) {
+                    Visit.find({"_id" : visits[0]._id}, function (error, visits) {
                         assert.ifError(error);
                         assert.equal(visits.length, 0);
                         done();
@@ -331,7 +319,7 @@ module.exports = function () {
         });
 
         it("can't delete a Visit because don't have a token", function (done) {
-            var url = URL_ROOT + "/visit/";
+            var url = URL_ROOT + "/visit/" + visits[0]._id;
 
             superagent.del(url)
                 .end(function (error, res) {
@@ -341,6 +329,5 @@ module.exports = function () {
                     done();
                 });
         });
-
     });
 };

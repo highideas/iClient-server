@@ -1,10 +1,10 @@
 var assert = require("assert");
 var mongoose = require("mongoose");
 
-var clientSchema = require("../models/client");
+var clientSchema = require("../schemas/client");
 
 describe("Client Schema Tests", function () {
-    var Client = mongoose.model("Client", clientSchema, "client");
+    var Client = mongoose.model("Client", clientSchema, "clients");
 
     it("has a name field that's required string", function (done) {
         var client = new Client({});
