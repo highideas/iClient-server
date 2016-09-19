@@ -1,5 +1,7 @@
 # IClient
 
+[![Build Status](https://travis-ci.org/GabrielDeveloper/iclient.svg?branch=master)](https://travis-ci.org/GabrielDeveloper/iclient)
+
  Simple application to mark visit to clients.
 
 ### Tech
