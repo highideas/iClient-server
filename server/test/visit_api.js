@@ -132,6 +132,28 @@ module.exports = function () {
                 });
         });
 
+        it("should return error not found because don't have visits", function (done) {
+            var url = URL_ROOT + "/visit";
+
+            Visit.remove({}, function (error) {
+                assert.ifError(error);
+                superagent.get(url)
+                    .set("Authorization", token)
+                    .end(function (error, res) {
+                        assert.ok(error);
+                        assert.equal(res.status, status.NOT_FOUND);
+
+                        var results;
+                        assert.doesNotThrow(function (){
+                            results = JSON.parse(res.text).error;
+                        });
+
+                        assert.equal(results, "Not Found");
+                        done();
+                    });
+            });
+        });
+
         it("should show all visits", function (done) {
             var url = URL_ROOT + "/visit";
 
@@ -150,6 +172,22 @@ module.exports = function () {
 
                     done();
                 });
+        });
+
+        it("should not return visits because the query is invalid", function (done) {
+            var url = URL_ROOT + "/visit/search?invalid=queryinvalid";
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).error;
+                    });
+                    assert.equal(results, "Query invalid");
+                    done();
+            });
         });
 
         it("should return all visits of client selected by id", function (done) {
@@ -184,6 +222,25 @@ module.exports = function () {
                     });
                     assert.equal(results.length, 2);
                     assert.ok(results[0].visit_date > results[1].visit_date);
+                    done();
+                });
+        });
+
+        it("should not return visits of user selected by id", function (done) {
+            var url = URL_ROOT + "/visit/search?user=000000000000000000000001";
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.ok(error);
+                    assert.equal(res.status, status.NOT_FOUND);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).error;
+                    });
+
+                    assert.equal(results, "Not Found");
                     done();
                 });
         });
@@ -265,6 +322,19 @@ module.exports = function () {
                 });
         });
 
+        it("can't create a Visit because data is invalid", function (done) {
+            var url = URL_ROOT + "/visit/";
+
+            superagent.post(url)
+                .set("Authorization", token)
+                .send({"_id" : "1"})
+                .end(function (error, res) {
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
+                    done();
+                });
+        });
+
         it("can update a Visit", function (done) {
             var url = URL_ROOT + "/visit/" + visits[0]._id;
 
@@ -286,6 +356,19 @@ module.exports = function () {
                         assert.equal(visits[0].value_received, 500);
                         done();
                     });
+                });
+        });
+
+        it("can't update a Visit because id is invalid", function (done) {
+            var url = URL_ROOT + "/visit/1";
+
+            superagent.put(url)
+                .set("Authorization", token)
+                .send({})
+                .end(function (error, res) {
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
+                    done();
                 });
         });
 
@@ -315,6 +398,18 @@ module.exports = function () {
                         assert.equal(visits.length, 0);
                         done();
                     });
+                });
+        });
+
+        it("can't delete a Visit because id is invalid", function (done) {
+            var url = URL_ROOT + "/visit/1";
+
+            superagent.del(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
+                    done();
                 });
         });
 

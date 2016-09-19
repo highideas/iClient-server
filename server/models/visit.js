@@ -11,11 +11,16 @@ Visit.search = function(params, callback) {
 
     var query = Visit.acceptable_params_filter(params);
 
-    Visit.find(query)
-        .sort(sort)
-        .then(function(visit) {
-            callback(null, visit);
-        });
+    if (Object.keys(query).length >= 1) {
+
+        return Visit.find(query)
+                .sort(sort)
+                .then(function(visit) {
+                    callback(null, visit);
+                });
+    }
+
+    return callback("Query invalid", null);
 }
 
 Visit.acceptable_params_filter = function(params) {

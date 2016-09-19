@@ -78,6 +78,50 @@ module.exports = function () {
                 });
         });
 
+        it("should return message of User Not Found", function (done) {
+            var url = URL_ROOT + "/authenticate";
+
+            superagent.post(url)
+                .send({
+                    "username" : "userTeste",
+                    "password" : "notFound"
+                })
+                .end(function (error, res) {
+                    assert.ifError(error);
+                    assert.equal(res.status, status.OK);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text);
+                    });
+
+                    assert.equal(results.message, "Authentication failed. User not found.");
+                    done();
+                });
+        });
+
+        it("should return message of Login Incorrect", function (done) {
+            var url = URL_ROOT + "/authenticate";
+
+            superagent.post(url)
+                .send({
+                    "username" : "gabriel",
+                    "password" : "wrongpassword"
+                })
+                .end(function (error, res) {
+                    assert.ifError(error);
+                    assert.equal(res.status, status.OK);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text);
+                    });
+
+                    assert.equal(results.message, "Authentication failed. Login incorrect");
+                    done();
+                });
+        });
+
         it("verify the token in requisition", function (done) {
             var url = URL_ROOT + "/verifyJWT";
 

@@ -98,6 +98,26 @@ module.exports = function () {
                 });
         });
 
+        it("should not return clients because don't have clients registred", function (done) {
+            var url = URL_ROOT + "/client";
+            Client.remove({}, function (error) {
+                assert.ifError(error);
+                superagent.get(url)
+                    .set("Authorization", token)
+                    .end(function (error, res) {
+                        assert.equal(res.status, status.NOT_FOUND);
+
+                        var results;
+                        assert.doesNotThrow(function (){
+                            results = JSON.parse(res.text).error;
+                        });
+
+                        assert.equal(results, "Not Found");
+                        done();
+                    });
+            });
+        });
+
         it("should not return all clients because don't have a token valid", function (done) {
             var url = URL_ROOT + "/client";
 
@@ -106,6 +126,23 @@ module.exports = function () {
                     assert.ok(error);
                     assert.equal(res.status, status.UNAUTHORIZED);
                     assert.equal(res.body.message, "Token not found");
+                    done();
+                });
+        });
+
+        it("should not return clients because don't have clients with name searched", function (done) {
+            var url = URL_ROOT + "/client/search?name=Teste";
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.equal(res.status, status.NOT_FOUND);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).error;
+                    });
+                    assert.equal(results, "Not Found");
                     done();
                 });
         });
@@ -178,6 +215,7 @@ module.exports = function () {
                     done();
                 });
         });
+
         it("can create a Client", function (done) {
             var url = URL_ROOT + "/client/";
 
@@ -199,7 +237,7 @@ module.exports = function () {
                 });
         });
 
-        it("can\"t create a Client because don't have a token", function (done) {
+        it("can't create a Client because don't have a token", function (done) {
             var url = URL_ROOT + "/client/";
 
             superagent.post(url)
@@ -237,7 +275,7 @@ module.exports = function () {
                 });
         });
 
-         it("can update a Client", function (done) {
+        it("can update a Client", function (done) {
             var url = URL_ROOT + "/client/000000000000000000000001";
 
             superagent.put(url)
@@ -257,6 +295,21 @@ module.exports = function () {
                         assert.equal(client[0].city, "London");
                         done();
                     });
+                });
+        });
+
+        it("can't update a Client because id is ivalid", function (done) {
+            var url = URL_ROOT + "/client/1";
+
+            superagent.put(url)
+                .set("Authorization", token)
+                .send({
+                    "name" : "Update Client",
+                })
+                .end(function (error, res) {
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
+                    done();
                 });
         });
 
@@ -289,6 +342,18 @@ module.exports = function () {
                         assert.equal(client.length, 0);
                         done();
                     });
+                });
+        });
+
+        it("can't delete a Client because id is invalid", function (done) {
+            var url = URL_ROOT + "/client/1";
+
+            superagent.del(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
+                    done();
                 });
         });
 
