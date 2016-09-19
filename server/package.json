@@ -1,18 +1,20 @@
 {
-  "name" : "IClient",
-  "author" : "Gabriel Gonçalves <contato@gabrieldeveloper.com.br>",
-  "description" : "Simple application to mark visit to clients.",
+  "name": "IClient",
+  "author": "Gabriel Gonçalves <contato@gabrieldeveloper.com.br>",
+  "description": "Simple application to mark visit to clients.",
   "scripts": {
-    "test": "mocha tests",
+    "test": "mocha test",
     "watch": "gulp watch",
-    "coverage" : "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha"
+    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha"
   },
   "dependencies": {
     "body-parser": "1.12.4",
+    "codacy-coverage": "^2.0.0",
     "express": "4.12.3",
     "express-session": "1.11.2",
     "http-status": "0.1.8",
     "jsonwebtoken": "^7.1.9",
+    "mocha-lcov-reporter": "^1.2.0",
     "mongoose": "4.6.0",
     "morgan": "1.7.0",
     "passport": "^0.2.2",
