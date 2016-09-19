@@ -9,3 +9,5 @@ before_script:
     - cd server/
     - npm install
     - mongo iclient_test --eval 'db.addUser("travis", "test");'
+
+script: npm run coverage
