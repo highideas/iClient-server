@@ -52,13 +52,17 @@ module.exports = function () {
                 "_id" : "000000000000000000000001",
                 "name" : "Gabriel",
                 "address" : "Street 23",
-                "city"  : "London"
+                "city"  : "London",
+                "area"  : "Center",
+                "frequency" : 15
                 },
                 {
                 "_id" : "000000000000000000000002",
                 "name" : "Gonçalves",
                 "address" : "Street 32",
-                "city"  : "London"
+                "city"  : "London",
+                "area"  : "Center",
+                "frequency" : 20
                 },
             ];
 
@@ -126,6 +130,23 @@ module.exports = function () {
                     assert.ok(error);
                     assert.equal(res.status, status.UNAUTHORIZED);
                     assert.equal(res.body.message, "Token not found");
+                    done();
+                });
+        });
+
+        it("should not return clients because the query is invalid", function (done) {
+            var url = URL_ROOT + "/client/search?query=Invalid";
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).error;
+                    });
+                    assert.equal(results, "Query invalid");
                     done();
                 });
         });
@@ -224,7 +245,9 @@ module.exports = function () {
                 .send({
                     "name" : "New Client",
                     "address" : "New Address to New Client",
-                    "city" : "New City to New Client"
+                    "city" : "New City to New Client",
+                    "area" : "New Area",
+                    "frequency" : 20
                 })
                 .end(function (error, res) {
                     assert.ifError(error);
@@ -262,6 +285,8 @@ module.exports = function () {
                 .send({
                     "name" : "New Client",
                     "address" : "New Address to New Client",
+                    "area"  : "New Area",
+                    "frequency" : 10
                 })
                 .end(function (error, res) {
                     assert.ok(error);

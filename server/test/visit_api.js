@@ -56,12 +56,16 @@ module.exports = function () {
                 {
                 "name" : "Gabriel",
                 "address" : "Street 23",
-                "city"  : "London"
+                "city"  : "London",
+                "area"  : "Center",
+                "frequency" : 10
                 },
                 {
                 "name" : "Gonçalves",
                 "address" : "Street 32",
-                "city"  : "London"
+                "city"  : "London",
+                "area"  : "Center",
+                "frequency" : 20
                 },
             ];
 

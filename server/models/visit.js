@@ -33,7 +33,7 @@ Visit.acceptable_params_filter = function(params) {
             _query[key + "._id"] =  new mongoose.Types.ObjectId(params[key]);
         }
     });
-    // retorno o 'res.query' só com as chaves aceitas
+
     return _query;
 }
 

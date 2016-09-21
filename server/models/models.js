@@ -22,9 +22,7 @@ module.exports = function (Config) {
     };
 
      _.each(models, function(value, key) {
-        wagner.factory(key, function (){
-            return value;
-        });
+        wagner.constant(key, value);
     });
 
     return models;

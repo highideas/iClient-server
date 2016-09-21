@@ -26,7 +26,7 @@ module.exports = function (api) {
 
     api.get("/client/search", verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
-            Client.find(req.query).exec(function (error, client) {
+            Client.search(req.query, function (error, client) {
                 if (error) {
                     return res.
                         status(status.INTERNAL_SERVER_ERROR).

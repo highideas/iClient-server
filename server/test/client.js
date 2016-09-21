@@ -18,6 +18,7 @@ describe("Client Schema Tests", function () {
             done();
         });
     });
+
     it("has a city field that's required string", function (done) {
         var client = new Client({});
         client.validate(function (err) {
@@ -31,6 +32,7 @@ describe("Client Schema Tests", function () {
         });
 
     });
+
     it("has a address field that's required string", function (done) {
         var client = new Client({});
         client.validate(function (err) {
@@ -43,6 +45,32 @@ describe("Client Schema Tests", function () {
             done();
         });
 
+    });
+
+    it("has a area field that's required string", function (done) {
+        var client = new Client({});
+        client.validate(function (err) {
+            assert.ok(err);
+
+            assert.equal(err.errors["area"].kind, "required");
+
+            client.name = "Gabriel";
+            assert.equal(client.name, "Gabriel");
+            done();
+        });
+    });
+
+    it("has a frequency field that's required string", function (done) {
+        var client = new Client({});
+        client.validate(function (err) {
+            assert.ok(err);
+
+            assert.equal(err.errors["frequency"].kind, "required");
+
+            client.name = "Gabriel";
+            assert.equal(client.name, "Gabriel");
+            done();
+        });
     });
 });
 
