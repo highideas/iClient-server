@@ -4,6 +4,7 @@ var status = require("http-status");
 var bodyparser = require("body-parser");
 var jwt    = require("jsonwebtoken");
 var wagner = require("wagner-core");
+var sinon = require("sinon");
 
 var URL_ROOT = "http://localhost:3001";
 
@@ -54,6 +55,27 @@ module.exports = function () {
             });
         });
 
+        it("should return http status error when error on User mongoose", function (done) {
+            var url = URL_ROOT + "/authenticate";
+
+            stubUser = sinon.stub(User, 'findOne', function(obj, callback) {
+                callback(new Error('An Error Has Occurred'));
+            });
+
+
+            superagent.post(url)
+                .send({
+                    "username" : "gabriel",
+                    "password" : "12345678"
+                })
+                .end(function (error, res) {
+                    stubUser.restore();
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
+                    done();
+                });
+        });
+
         it("verify authentication and if has authorization", function (done) {
             var url = URL_ROOT + "/authenticate";
 
@@ -74,6 +96,50 @@ module.exports = function () {
                     });
 
                     assert.ok(results.token);
+                    done();
+                });
+        });
+
+        it("should return message of User Not Found", function (done) {
+            var url = URL_ROOT + "/authenticate";
+
+            superagent.post(url)
+                .send({
+                    "username" : "userTeste",
+                    "password" : "notFound"
+                })
+                .end(function (error, res) {
+                    assert.ifError(error);
+                    assert.equal(res.status, status.OK);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text);
+                    });
+
+                    assert.equal(results.message, "Authentication failed. User not found.");
+                    done();
+                });
+        });
+
+        it("should return message of Login Incorrect", function (done) {
+            var url = URL_ROOT + "/authenticate";
+
+            superagent.post(url)
+                .send({
+                    "username" : "gabriel",
+                    "password" : "wrongpassword"
+                })
+                .end(function (error, res) {
+                    assert.ifError(error);
+                    assert.equal(res.status, status.OK);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text);
+                    });
+
+                    assert.equal(results.message, "Authentication failed. Login incorrect");
                     done();
                 });
         });

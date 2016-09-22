@@ -13,7 +13,7 @@ module.exports = function (api) {
                         status(status.INTERNAL_SERVER_ERROR).
                         json({ error : error.toString() });
                 }
-                if (!clients) {
+                if (clients.length <= 0) {
                     return res.
                         status(status.NOT_FOUND).
                         json({ error: "Not Found"});
@@ -26,13 +26,13 @@ module.exports = function (api) {
 
     api.get("/client/search", verifyJWT, wagner.invoke(function (Client) {
         return function (req, res) {
-            Client.find(req.query).exec(function (error, client) {
+            Client.search(req.query, function (error, client) {
                 if (error) {
                     return res.
                         status(status.INTERNAL_SERVER_ERROR).
                         json({ error : error.toString() });
                 }
-                if (!client) {
+                if (client.length <= 0) {
                     return res.
                         status(status.NOT_FOUND).
                         json({ error: "Not Found"});

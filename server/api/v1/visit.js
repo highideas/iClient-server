@@ -14,7 +14,7 @@ module.exports = function (api) {
                         status(status.INTERNAL_SERVER_ERROR).
                         json({ error : error.toString() });
                 }
-                if (!visits) {
+                if (visits.length <= 0) {
                     return res.
                         status(status.NOT_FOUND).
                         json({ error: "Not Found"});
@@ -34,7 +34,7 @@ module.exports = function (api) {
                         status(status.INTERNAL_SERVER_ERROR).
                         json({ error : error.toString() });
                 }
-                if (!visits) {
+                if (visits.length <= 0) {
                     return res.
                         status(status.NOT_FOUND).
                         json({ error: "Not Found"});

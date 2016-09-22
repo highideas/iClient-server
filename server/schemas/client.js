@@ -18,6 +18,14 @@ var clientSchema = {
     city : {
         type: String,
         required: true
+    },
+    area : {
+        type: String,
+        required: true
+    },
+    frequency : {
+        type: Number,
+        required: true
     }
 };
 

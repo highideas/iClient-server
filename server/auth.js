@@ -8,8 +8,7 @@ module.exports = function (api) {
     
     api.post("/authenticate", wagner.invoke(function (User, Config) {
         return function (req, res) {
-            User.findOne({"username" : req.body.username })
-                .exec(function (error, user) {
+            User.findOne({"username" : req.body.username }, function (error, user) {
                     if (error) {
                         return res.
                             status(status.INTERNAL_SERVER_ERROR).

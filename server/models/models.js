@@ -10,10 +10,6 @@ module.exports = function (Config) {
 
     mongoose.connect(urlMongo);
 
-    wagner.factory("db", function(){
-        return mongoose;
-    });
-
     var User    = require("./user");
     var Client  = require("./client");
     var Visit   = require("./visit");
@@ -26,9 +22,7 @@ module.exports = function (Config) {
     };
 
      _.each(models, function(value, key) {
-        wagner.factory(key, function (){
-            return value;
-        });
+        wagner.constant(key, value);
     });
 
     return models;
