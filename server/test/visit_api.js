@@ -4,6 +4,7 @@ var status = require("http-status");
 var bodyparser = require("body-parser");
 var wagner = require("wagner-core");
 var jwt    = require("jsonwebtoken");
+var sinon = require("sinon");
 
 var URL_ROOT = "http://localhost:3001";
 
@@ -156,6 +157,23 @@ module.exports = function () {
                         done();
                     });
             });
+        });
+
+        it("should return http status error when error on Visit mongoose", function (done) {
+            var url = URL_ROOT + "/visit";
+
+            stubVisit = sinon.stub(Visit, 'find', function(obj, callback) {
+                callback(new Error('An Error Has Occurred'), []);
+            });
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    stubVisit.restore();
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
+                    done();
+                });
         });
 
         it("should show all visits", function (done) {

@@ -4,6 +4,7 @@ var status = require("http-status");
 var bodyparser = require("body-parser");
 var jwt    = require("jsonwebtoken");
 var wagner = require("wagner-core");
+var sinon = require("sinon");
 
 var URL_ROOT = "http://localhost:3001";
 
@@ -52,6 +53,27 @@ module.exports = function () {
                 assert.ifError(err);
                 done();
             });
+        });
+
+        it("should return http status error when error on User mongoose", function (done) {
+            var url = URL_ROOT + "/authenticate";
+
+            stubUser = sinon.stub(User, 'findOne', function(obj, callback) {
+                callback(new Error('An Error Has Occurred'));
+            });
+
+
+            superagent.post(url)
+                .send({
+                    "username" : "gabriel",
+                    "password" : "12345678"
+                })
+                .end(function (error, res) {
+                    stubUser.restore();
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
+                    done();
+                });
         });
 
         it("verify authentication and if has authorization", function (done) {
