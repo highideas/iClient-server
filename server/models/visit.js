@@ -21,7 +21,7 @@ Visit.search = function(params, callback) {
     }
 
     return callback("Query invalid", null);
-}
+};
 
 Visit.acceptable_params_filter = function(params) {
 
@@ -35,6 +35,6 @@ Visit.acceptable_params_filter = function(params) {
     });
 
     return _query;
-}
+};
 
 module.exports = Visit;

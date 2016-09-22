@@ -15,7 +15,7 @@ Client.search = function(params, callback) {
     }
 
     return callback("Query invalid", null);
-}
+};
 
 Client.acceptable_params_filter = function(params) {
 
@@ -29,5 +29,6 @@ Client.acceptable_params_filter = function(params) {
     });
 
     return _query;
-}
+};
+
 module.exports = Client;

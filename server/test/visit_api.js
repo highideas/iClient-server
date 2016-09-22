@@ -315,7 +315,7 @@ module.exports = function () {
                 "visit_date" : new Date,
                 "sales_quantity" : 100,
                 "value_received" : 250
-            }
+            };
 
             superagent.post(url)
                 .set("Authorization", token)
@@ -363,7 +363,7 @@ module.exports = function () {
             var visit = {
                 "sales_quantity" : 200,
                 "value_received" : 500
-            }
+            };
 
             superagent.put(url)
                 .set("Authorization", token)
