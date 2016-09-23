@@ -23,6 +23,7 @@
     "wagner-core": "0.2.0"
   },
   "devDependencies": {
+    "codecov": "^1.0.1",
     "gulp": "3.8.11",
     "gulp-mocha": "2.0.1",
     "istanbul": "^0.4.5",
