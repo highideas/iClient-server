@@ -11,6 +11,7 @@ module.exports = function () {
 
     app = rootRequire("/api/v1/client")(app);
     app = rootRequire("/api/v1/visit")(app);
+    app = rootRequire("/api/v1/area")(app);
     
     return app;
 };
