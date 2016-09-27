@@ -38,4 +38,5 @@ describe("Tests API", function() {
     rootRequire("/test/auth")();
     rootRequire("/test/client_api")();
     rootRequire("/test/visit_api")();
+    rootRequire("/test/area_api")();
 });

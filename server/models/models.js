@@ -13,11 +13,13 @@ module.exports = function (Config) {
     var User    = require("./user");
     var Client  = require("./client");
     var Visit   = require("./visit");
+    var Area   = require("./area");
 
     var models = {
         User : User,
         Client : Client,
         Visit : Visit,
+        Area: Area,
         Config: Config
     };
 
