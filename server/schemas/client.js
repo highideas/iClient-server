@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+var Area = require('./area');
 
 var clientSchema = {
     name : {
@@ -20,7 +21,7 @@ var clientSchema = {
         required: true
     },
     area : {
-        type: String,
+        type: Area.areaSchema,
         required: true
     },
     frequency : {

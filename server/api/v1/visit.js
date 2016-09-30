@@ -89,5 +89,26 @@ module.exports = function (api) {
         };
     }));
 
+    api.get("/visit/area/:id", verifyJWT, wagner.invoke(function (Visit) {
+        return function (req, res) {
+            var query = { 'client.area._id' : req.params.id};
+            Visit.find(query, function (error, visits) {
+                if (error) {
+                    return res.
+                        status(status.INTERNAL_SERVER_ERROR).
+                        json({ error : error.toString() });
+                }
+                if (visits.length <= 0) {
+                    return res.
+                        status(status.NOT_FOUND).
+                        json({ error: "Not Found"});
+                }
+
+                return res.json({ visits : visits});
+
+            });
+        };
+    }));
+
     return api;
 };

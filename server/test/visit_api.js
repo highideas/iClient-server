@@ -58,14 +58,14 @@ module.exports = function () {
                 "name" : "Gabriel",
                 "address" : "Street 23",
                 "city"  : "London",
-                "area"  : "Center",
+                "area"  : { "_id": "Center", 'parents' : "Center"},
                 "frequency" : 10
                 },
                 {
                 "name" : "Gonçalves",
                 "address" : "Street 32",
                 "city"  : "London",
-                "area"  : "Center",
+                "area"  : { "_id": "Center", 'parents': "Center"},
                 "frequency" : 20
                 },
             ];
@@ -302,6 +302,26 @@ module.exports = function () {
 
                     assert.equal(results.length, 3);
                     assert.ok(results[0].visit_date > results[2].visit_date);
+                    done();
+                });
+        });
+
+        it("should show all last visits of area selected", function (done) {
+            var url = URL_ROOT + "/visit/area/Center";
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.ifError(error);
+                    assert.equal(res.status, status.OK);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).visits;
+                    });
+
+                    assert.equal(results.length, 3);
+
                     done();
                 });
         });
