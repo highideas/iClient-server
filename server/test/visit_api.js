@@ -320,8 +320,44 @@ module.exports = function () {
                         results = JSON.parse(res.text).visits;
                     });
 
-                    assert.equal(results.length, 3);
+                    assert.equal(results.length, 2);
+                    assert.notEqual(results[0]._id, results[1]._id);
 
+                    done();
+                });
+        });
+
+        it("should not return visits of area selected because the area has not any clients visited", function (done) {
+            var url = URL_ROOT + "/visit/area/North";
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.ok(error);
+                    assert.equal(res.status, status.NOT_FOUND);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).error;
+                    });
+                    assert.equal(results, "Not Found");
+                    done();
+                });
+        });
+
+        it("should return erro HTTP  when has erro in Visit model", function (done) {
+            var url = URL_ROOT + "/visit/area/Center";
+
+            stubVisit = sinon.stub(Visit, 'aggregate', function(obj, callback) {
+                callback(new Error('An Error Has Occurred'), []);
+            });
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    stubVisit.restore();
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
                     done();
                 });
         });

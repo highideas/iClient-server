@@ -91,21 +91,31 @@ module.exports = function (api) {
 
     api.get("/visit/area/:id", verifyJWT, wagner.invoke(function (Visit) {
         return function (req, res) {
-            var query = { 'client.area._id' : req.params.id};
-            Visit.find(query, function (error, visits) {
-                if (error) {
-                    return res.
-                        status(status.INTERNAL_SERVER_ERROR).
-                        json({ error : error.toString() });
-                }
-                if (visits.length <= 0) {
-                    return res.
-                        status(status.NOT_FOUND).
-                        json({ error: "Not Found"});
-                }
+            var query = {'client.area._id' : req.params.id};
+            Visit.aggregate([
+                    { $match: query},
+                    { $sort: {visit_date: -1}},
+                    { $group: {
+                        _id: "$client.name",
+                        last_visit: {$first: "$visit_date"},
+                        client: {$addToSet : "$client"},
+                        }
+                    },
+                    { $unwind: "$last_visit"},
+                ],
+                function (error, visits) {
+                    if (error) {
+                        return res.
+                            status(status.INTERNAL_SERVER_ERROR).
+                            json({ error : error.toString() });
+                    }
+                    if (visits.length <= 0) {
+                        return res.
+                            status(status.NOT_FOUND).
+                            json({ error: "Not Found"});
+                    }
 
                 return res.json({ visits : visits});
-
             });
         };
     }));
