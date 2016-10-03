@@ -59,14 +59,16 @@ module.exports = function () {
                 "address" : "Street 23",
                 "city"  : "London",
                 "area"  : "Center",
-                "frequency" : 10
+                "frequency" : 10,
+                "ability" : 200
                 },
                 {
                 "name" : "Gonçalves",
                 "address" : "Street 32",
                 "city"  : "London",
                 "area"  : "Center",
-                "frequency" : 20
+                "frequency" : 20,
+                "ability" : 200
                 },
             ];
 
