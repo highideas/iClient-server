@@ -72,5 +72,18 @@ describe("Client Schema Tests", function () {
             done();
         });
     });
+
+    it("has a ability field that's required string", function (done) {
+        var client = new Client({});
+        client.validate(function (err) {
+            assert.ok(err);
+
+            assert.equal(err.errors["ability"].kind, "required");
+
+            client.name = "Gabriel";
+            assert.equal(client.name, "Gabriel");
+            done();
+        });
+    });
 });
 

@@ -26,6 +26,10 @@ var clientSchema = {
     frequency : {
         type: Number,
         required: true
+    },
+    ability : {
+        type: Number,
+        required: true
     }
 };
 
