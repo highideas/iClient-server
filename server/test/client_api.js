@@ -55,7 +55,8 @@ module.exports = function () {
                 "address" : "Street 23",
                 "city"  : "London",
                 "area"  : "Center",
-                "frequency" : 15
+                "frequency" : 15,
+                "ability" : 200
                 },
                 {
                 "_id" : "000000000000000000000002",
@@ -63,7 +64,8 @@ module.exports = function () {
                 "address" : "Street 32",
                 "city"  : "London",
                 "area"  : "Center",
-                "frequency" : 20
+                "frequency" : 20,
+                "ability" : 200
                 },
             ];
 
@@ -265,7 +267,8 @@ module.exports = function () {
                     "address" : "New Address to New Client",
                     "city" : "New City to New Client",
                     "area" : "New Area",
-                    "frequency" : 20
+                    "frequency" : 20,
+                    "ability" : 200
                 })
                 .end(function (error, res) {
                     assert.ifError(error);
@@ -304,7 +307,8 @@ module.exports = function () {
                     "name" : "New Client",
                     "address" : "New Address to New Client",
                     "area"  : "New Area",
-                    "frequency" : 10
+                    "frequency" : 10,
+                    "ability" : 200
                 })
                 .end(function (error, res) {
                     assert.ok(error);
