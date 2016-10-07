@@ -16,8 +16,7 @@ services:
         environment:
          - DATABASE_ICLIENT=${DATABASE_ICLIENT}
          - SECRET_ICLIENT=${SECRET_ICLIENT}
-        entrypoint: 'node'
-        command: '/server/index.js'
+        command: bash -c 'cd /server/ && npm install && node /server/index.js'
         ports:
          - "3000:3000"
         volumes:
