@@ -2,3 +2,5 @@
 *config
 */logs/*
 npm-debug.log
+*.swp
+*.env

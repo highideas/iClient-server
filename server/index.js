@@ -1,7 +1,9 @@
+global.rootPath = require("path").dirname(require.main.filename) + "/";
 global.rootRequire = function(name) {
-    return require(require("path").dirname(require.main.filename) + "/" + name);
+    return require(global.rootPath + name);
 };
 
+require('dotenv').config({path: global.rootPath + '.env', silent: true});
 var express = require("express");
 var wagner = require("wagner-core");
 var bodyParser  = require("body-parser");
@@ -32,4 +34,3 @@ app.use("/api/v1", rootRequire("api/v1/api")());
 
 app.listen(3000);
 console.log("Listening on port 3000!");
-
