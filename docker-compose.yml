@@ -1,7 +1,7 @@
 version: '2'
 services:
     iClientMongoServer:
-        image: mongo:3.0
+        image: mongo:3.2
         container_name: iClientMongoServer
         restart: always
         volumes:
