@@ -340,7 +340,7 @@ module.exports = function () {
                     });
                     assert.equal(results.length, 2);
                     assert.notEqual(results[0]._id, results[1]._id);
-                    assert.notEqual(results[0].visit[0]._id, results[0].visit[1]._id);
+                    assert.notEqual(results[0].visits[0]._id, results[0].visits[1]._id);
 
                     done();
                 });
