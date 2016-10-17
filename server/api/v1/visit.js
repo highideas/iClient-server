@@ -131,7 +131,7 @@ module.exports = function (api) {
                     }},
                     { $group : {
                         _id: "$visit.client.area._id",
-                        visit: {$push: "$$ROOT"}
+                        visits: {$push: "$$ROOT"}
                     }}
                 ],
                 function (error, visits) {
