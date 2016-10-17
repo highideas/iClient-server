@@ -120,5 +120,36 @@ module.exports = function (api) {
         };
     }));
 
+    api.get("/visit/group/area", verifyJWT, wagner.invoke(function (Visit) {
+        return function (req, res) {
+            var query = {'client.area._id' : req.params.id};
+            Visit.aggregate([
+                    { $sort: {visit_date: -1}},
+                    { $group: {
+                        _id: "$client.name",
+                        visit: {$first: "$$ROOT"}
+                    }},
+                    { $group : {
+                        _id: "$visit.client.area._id",
+                        visit: {$push: "$$ROOT"}
+                    }}
+                ],
+                function (error, visits) {
+                    if (error) {
+                        return res.
+                            status(status.INTERNAL_SERVER_ERROR).
+                            json({ error : error.toString() });
+                    }
+                    if (visits.length <= 0) {
+                        return res.
+                            status(status.NOT_FOUND).
+                            json({ error: "Not Found"});
+                    }
+
+                return res.json({ visits : visits});
+            });
+        };
+    }));
+
     return api;
 };

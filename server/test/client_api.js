@@ -54,7 +54,7 @@ module.exports = function () {
                 "name" : "Gabriel",
                 "address" : "Street 23",
                 "city"  : "London",
-                "area"  : "Center",
+                "area"  : { "_id": "Center", 'parents' : "Center"},
                 "frequency" : 15,
                 "ability" : 200
                 },
@@ -63,7 +63,7 @@ module.exports = function () {
                 "name" : "Gonçalves",
                 "address" : "Street 32",
                 "city"  : "London",
-                "area"  : "Center",
+                "area"  : { "_id": "South", 'parents': "Center"},
                 "frequency" : 20,
                 "ability" : 200
                 },
