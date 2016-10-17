@@ -46,6 +46,26 @@ module.exports = function (api) {
         };
     }));
 
+    api.get("/visit/:id", verifyJWT, wagner.invoke(function (Visit) {
+        return function (req, res) {
+            var query = {"_id" : req.params.id};
+            Visit.find(query, function (error, visit) {
+                if (error) {
+                    return res.
+                        status(status.INTERNAL_SERVER_ERROR).
+                        json({ error : error.toString() });
+                }
+                if (visit.length <= 0) {
+                    return res.
+                        status(status.NOT_FOUND).
+                        json({ error: "Not Found"});
+                }
+
+                res.json({ visit : visit});
+            });
+        };
+    }));
+
     api.post("/visit", verifyJWT, wagner.invoke(function (Visit) {
         return function (req, res) {
             Visit.create(req.body, function (error, visit) {
