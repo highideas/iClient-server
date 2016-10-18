@@ -106,6 +106,7 @@ module.exports = function () {
                     "value_received" : 250
                 },
                 {
+                    "_id" : "000000000000000000000001",
                     "visit_date" : tomorrow,
                     "sales_quantity" : 100,
                     "value_received" : 250
@@ -211,6 +212,63 @@ module.exports = function () {
 
                     assert.equal(results.length, 4);
 
+                    done();
+                });
+        });
+
+        it("should show visits searched by id", function (done) {
+            var url = URL_ROOT + "/visit/000000000000000000000001";
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.ifError(error);
+                    assert.equal(res.status, status.OK);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).visit;
+                    });
+
+                    assert.equal(results.length, 1);
+                    assert.equal(results[0].client.name, "Rodrigues");
+
+                    done();
+                });
+        });
+
+        it("should not return visit with id searched", function (done) {
+            var url = URL_ROOT + "/visit/000000000000000000000002";
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.ok(error);
+                    assert.equal(res.status, status.NOT_FOUND);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).error;
+                    });
+
+                    assert.equal(results, "Not Found");
+                    done();
+                });
+        });
+
+        it("should return error Http when has erro in endpoint visit/:id", function (done) {
+            var url = URL_ROOT + "/visit/000000000000000000000001";
+
+            stubVisit = sinon.stub(Visit, 'find', function(obj, callback) {
+                callback(new Error('An Error Has Occurred'), []);
+            });
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    stubVisit.restore();
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
                     done();
                 });
         });
