@@ -66,8 +66,16 @@ module.exports = function () {
                 "name" : "Gonçalves",
                 "address" : "Street 32",
                 "city"  : "London",
-                "area"  : { "_id": "Center", 'parents': "Center"},
+                "area"  : { "_id": "South", 'parents': "Center"},
                 "frequency" : 20,
+                "ability" : 200
+                },
+                {
+                "name" : "Rodrigues",
+                "address" : "Street 23",
+                "city"  : "London",
+                "area"  : { "_id": "Center", 'parents' : "Center"},
+                "frequency" : 10,
                 "ability" : 200
                 },
             ];
@@ -97,6 +105,13 @@ module.exports = function () {
                     "sales_quantity" : 100,
                     "value_received" : 250
                 },
+                {
+                    "_id" : "000000000000000000000001",
+                    "visit_date" : tomorrow,
+                    "sales_quantity" : 100,
+                    "value_received" : 250
+                },
+
 
             ];
 
@@ -116,6 +131,9 @@ module.exports = function () {
 
                     createVisits[2].client  = clientsCreated[0];
                     createVisits[2].user    = userCreated;
+
+                    createVisits[3].client  = clientsCreated[2];
+                    createVisits[3].user    = userCreated;
 
                     Visit.create(createVisits, function (err, visitsCreated) {
                         visits = visitsCreated;
@@ -192,8 +210,65 @@ module.exports = function () {
                         results = JSON.parse(res.text).visits;
                     });
 
-                    assert.equal(results.length, 3);
+                    assert.equal(results.length, 4);
 
+                    done();
+                });
+        });
+
+        it("should show visits searched by id", function (done) {
+            var url = URL_ROOT + "/visit/000000000000000000000001";
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.ifError(error);
+                    assert.equal(res.status, status.OK);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).visit;
+                    });
+
+                    assert.equal(results.length, 1);
+                    assert.equal(results[0].client.name, "Rodrigues");
+
+                    done();
+                });
+        });
+
+        it("should not return visit with id searched", function (done) {
+            var url = URL_ROOT + "/visit/000000000000000000000002";
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.ok(error);
+                    assert.equal(res.status, status.NOT_FOUND);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).error;
+                    });
+
+                    assert.equal(results, "Not Found");
+                    done();
+                });
+        });
+
+        it("should return error Http when has erro in endpoint visit/:id", function (done) {
+            var url = URL_ROOT + "/visit/000000000000000000000001";
+
+            stubVisit = sinon.stub(Visit, 'find', function(obj, callback) {
+                callback(new Error('An Error Has Occurred'), []);
+            });
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    stubVisit.restore();
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
                     done();
                 });
         });
@@ -283,7 +358,7 @@ module.exports = function () {
                         results = JSON.parse(res.text).visits;
                     });
 
-                    assert.equal(results.length, 3);
+                    assert.equal(results.length, 4);
                     done();
                 });
         });
@@ -302,8 +377,67 @@ module.exports = function () {
                         results = JSON.parse(res.text).visits;
                     });
 
-                    assert.equal(results.length, 3);
+                    assert.equal(results.length, 4);
                     assert.ok(results[0].visit_date > results[2].visit_date);
+                    done();
+                });
+        });
+
+        it("should show all last visits grouped by area", function (done) {
+            var url = URL_ROOT + "/visit/group/area";
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.ifError(error);
+                    assert.equal(res.status, status.OK);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).visits;
+                    });
+                    assert.equal(results.length, 2);
+                    assert.notEqual(results[0]._id, results[1]._id);
+                    assert.notEqual(results[0].visits[0]._id, results[0].visits[1]._id);
+
+                    done();
+                });
+        });
+
+        it("should not return last visits grouped by area because dont have visits", function (done) {
+            var url = URL_ROOT + "/visit/group/area";
+
+            Visit.remove({}, function (error) {
+                assert.ifError(error);
+                superagent.get(url)
+                    .set("Authorization", token)
+                    .end(function (error, res) {
+                        assert.ok(error);
+                        assert.equal(res.status, status.NOT_FOUND);
+
+                        var results;
+                        assert.doesNotThrow(function (){
+                            results = JSON.parse(res.text).error;
+                        });
+                        assert.equal(results, "Not Found");
+                        done();
+                });
+            });
+        });
+
+        it("should return error Http when has erro in endpoint visit/group/areas", function (done) {
+            var url = URL_ROOT + "/visit/group/area";
+
+            stubVisit = sinon.stub(Visit, 'aggregate', function(obj, callback) {
+                callback(new Error('An Error Has Occurred'), []);
+            });
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    stubVisit.restore();
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
                     done();
                 });
         });
@@ -347,7 +481,7 @@ module.exports = function () {
                 });
         });
 
-        it("should return erro HTTP  when has erro in Visit model", function (done) {
+        it("should return erro HTTP when has erro in Visit model", function (done) {
             var url = URL_ROOT + "/visit/area/Center";
 
             stubVisit = sinon.stub(Visit, 'aggregate', function(obj, callback) {
@@ -383,7 +517,7 @@ module.exports = function () {
                     assert.equal(res.status, status.OK);
                     Visit.find({}, function (error, visits) {
                         assert.ifError(error);
-                        assert.equal(visits.length, 4);
+                        assert.equal(visits.length, 5);
                         done();
                     });
                 });

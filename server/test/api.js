@@ -6,20 +6,14 @@ var express = require("express");
 var wagner = require("wagner-core");
 var superagent = require("superagent");
 var bodyparser = require("body-parser");
+var Config = rootRequire('config_test');
 
 var URL_ROOT = "http://localhost:3001";
 
 describe("Tests API", function() {
     var server;
     var Client;
-    var config = {
-        "host" : "mongodb://localhost",
-        "port" : "27017",
-        "database" : "iclient_test",
-        "secret" : "Keysecret-Teste"
-    };
-
-    var models = rootRequire("models/models")(config);
+    var models = rootRequire("models/models")(Config);
 
     before(function () {
         var app = express();
