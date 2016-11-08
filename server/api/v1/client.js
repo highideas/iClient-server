@@ -52,7 +52,7 @@ module.exports = function (api) {
                         json({ error: error.toString()});
                 }
 
-                return res.json({ client: client});
+                return res.status(status.CREATED).json({ client: client});
             });
         };
     }));
