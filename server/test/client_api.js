@@ -272,7 +272,7 @@ module.exports = function () {
                 })
                 .end(function (error, res) {
                     assert.ifError(error);
-                    assert.equal(res.status, status.OK);
+                    assert.equal(res.status, status.CREATED);
                     Client.find({}, function (error, clients) {
                         assert.ifError(error);
                         assert.equal(clients.length, 3);

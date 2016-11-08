@@ -75,7 +75,7 @@ module.exports = function (api) {
                         json({ error: error.toString()});
                 }
 
-                return res.json({ visit: visit });
+                return res.status(status.CREATED).json({ visit: visit });
             });
         };
     }));

@@ -159,7 +159,7 @@ module.exports = function () {
                 })
                 .end(function (error, res) {
                     assert.ifError(error);
-                    assert.equal(res.status, status.OK);
+                    assert.equal(res.status, status.CREATED);
                     Area.find({}, function (error, areas) {
                         assert.ifError(error);
                         assert.equal(areas.length, 3);

@@ -514,10 +514,44 @@ module.exports = function () {
                 .send(visit)
                 .end(function (error, res) {
                     assert.ifError(error);
-                    assert.equal(res.status, status.OK);
+                    assert.equal(res.status, status.CREATED);
                     Visit.find({}, function (error, visits) {
                         assert.ifError(error);
                         assert.equal(visits.length, 5);
+                        done();
+                    });
+                });
+        });
+
+        it("can create more than one visit at a time", function (done) {
+            var url = URL_ROOT + "/visit";
+
+            var visit = [
+		{
+                "client" : clients[1],
+                "user"  :  user,
+                "visit_date" : new Date,
+                "sales_quantity" : 100,
+                "value_received" : 250
+            	},
+		{
+                "client" : clients[0],
+                "user"  :  user,
+                "visit_date" : new Date,
+                "sales_quantity" : 100,
+                "value_received" : 250
+            	}
+	    ]
+
+            superagent.post(url)
+                .set("Authorization", token)
+                .send(visit)
+                .end(function (error, res) {
+                    assert.ifError(error);
+                    assert.equal(res.status, status.CREATED);
+                    Visit.find({}, function (error, visits) {
+                        assert.ifError(error);
+                        assert.equal(visits.length, 6);
                         done();
                     });
                 });
