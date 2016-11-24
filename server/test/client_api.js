@@ -257,6 +257,59 @@ module.exports = function () {
                 });
         });
 
+        it("should not return a client because ID is not found", function (done) {
+            var url = URL_ROOT + "/client/000000000000000000000005";
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.equal(res.status, status.NOT_FOUND);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).error;
+                    });
+                    assert.equal(results, "Not Found");
+                    done();
+                });
+        });
+
+        it("should return http status error when error on Client mongoose for serach by id", function (done) {
+            var url = URL_ROOT + "/client/000000000000000000000001";
+
+            stubClient = sinon.stub(Client, 'find', function(obj, callback) {
+                callback(new Error('An Error Has Occurred'), []);
+            });
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    stubClient.restore();
+                    assert.ok(error);
+                    assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
+                    done();
+                });
+        });
+
+        it("return a client by ID", function (done) {
+            var url = URL_ROOT + "/client/000000000000000000000001";
+
+            superagent.get(url)
+                .set("Authorization", token)
+                .end(function (error, res) {
+                    assert.ifError(error);
+                    assert.equal(res.status, status.OK);
+
+                    var results;
+                    assert.doesNotThrow(function (){
+                        results = JSON.parse(res.text).client;
+                    });
+                    assert.equal(results.length, 1);
+                    assert.equal(results[0].name, "Gabriel");
+                    done();
+                });
+        });
+
         it("can create a Client", function (done) {
             var url = URL_ROOT + "/client/";
 
@@ -272,7 +325,7 @@ module.exports = function () {
                 })
                 .end(function (error, res) {
                     assert.ifError(error);
-                    assert.equal(res.status, status.OK);
+                    assert.equal(res.status, status.CREATED);
                     Client.find({}, function (error, clients) {
                         assert.ifError(error);
                         assert.equal(clients.length, 3);

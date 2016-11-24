@@ -33,7 +33,7 @@ module.exports = function (api) {
                         json({ error: error.toString()});
                 }
 
-                return res.json({ area: area});
+                return res.status(status.CREATED).json({ area: area});
             });
         };
     }));
