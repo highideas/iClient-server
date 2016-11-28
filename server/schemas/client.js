@@ -7,7 +7,7 @@ var clientSchema = {
         index: { unique: true },
         required: true,
     },
-    telefone : { type: String },
+    phone : { type: String },
     loc: {
         type: [Number],  // [<longitude>, <latitude>]
         index: "2d"      // create the geospatial index

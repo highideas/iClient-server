@@ -5,7 +5,7 @@ var wagner = require("wagner-core");
 var verifyJWT = rootRequire("middleware/verifyJWT");
 
 module.exports = function (api) {
-    
+
     api.post("/authenticate", wagner.invoke(function (User, Config) {
         return function (req, res) {
             User.findOne({"username" : req.body.username }, function (error, user) {
@@ -14,12 +14,8 @@ module.exports = function (api) {
                             status(status.INTERNAL_SERVER_ERROR).
                             json({ error: error.toString()});
                     }
-                    if (!user) {
-                        return res.json({ success: false, message: "Authentication failed. User not found." });
-                    }
-
-                    if (user.password !== req.body.password) {
-                        return res.json({ success: false, message: "Authentication failed. Login incorrect" });
+                    if (!user || (user.password !== req.body.password)) {
+                        return res.status(status.UNAUTHORIZED).json({ success: false, message: "Authentication failed. Login incorrect." });
                     }
 
                     var token = jwt.sign(user.attributes, Config.secret);
