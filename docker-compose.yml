@@ -26,4 +26,5 @@ services:
         tty: true
 
 volumes:
-    iClientMongoData: {}
+    iClientMongoData:
+        driver: "local"
