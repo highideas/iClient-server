@@ -35,5 +35,9 @@ module.exports = function (api) {
         return res.status(status.OK).json({success: status.OK, });
     });
 
+    api.get("/healthcheck", function (req, res) {
+            return res.status(status.OK).json({ message: "API is running"});
+    });
+
     return api;
 };
