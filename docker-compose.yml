@@ -1,7 +1,7 @@
 version: '2'
 services:
     iClientMongoServer:
-        image: mongo:3.2
+        image: mongo:3.4
         container_name: iClientMongoServer
         restart: always
         volumes:
@@ -10,7 +10,7 @@ services:
          - "27017:27017"
 
     iClientNodeServer:
-        image: node:4.6.0
+        image: node:6.10
         container_name: iClientNodeServer
         restart: always
         environment:
@@ -26,4 +26,5 @@ services:
         tty: true
 
 volumes:
-    iClientMongoData: {}
+    iClientMongoData:
+        driver: "local"

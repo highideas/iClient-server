@@ -16,7 +16,7 @@
     "http-status": "0.1.8",
     "jsonwebtoken": "^7.1.9",
     "mocha-lcov-reporter": "^1.2.0",
-    "mongoose": "4.6.0",
+    "mongoose": "4.9.9",
     "morgan": "1.7.0",
     "passport": "^0.2.2",
     "superagent": "1.2.0",
