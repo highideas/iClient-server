@@ -100,7 +100,7 @@ module.exports = function () {
                 });
         });
 
-        it("should return message of User Not Found", function (done) {
+        it("should return message of Login incorrect if user not exist", function (done) {
             var url = URL_ROOT + "/authenticate";
 
             superagent.post(url)
@@ -109,20 +109,20 @@ module.exports = function () {
                     "password" : "notFound"
                 })
                 .end(function (error, res) {
-                    assert.ifError(error);
-                    assert.equal(res.status, status.OK);
+                    assert.ok(error);
+                    assert.equal(res.status, status.UNAUTHORIZED);
 
                     var results;
                     assert.doesNotThrow(function (){
                         results = JSON.parse(res.text);
                     });
 
-                    assert.equal(results.message, "Authentication failed. User not found.");
+                    assert.equal(results.message, "Authentication failed. Login incorrect.");
                     done();
                 });
         });
 
-        it("should return message of Login Incorrect", function (done) {
+        it("should return message of Login Incorrect if password is wrong", function (done) {
             var url = URL_ROOT + "/authenticate";
 
             superagent.post(url)
@@ -131,15 +131,15 @@ module.exports = function () {
                     "password" : "wrongpassword"
                 })
                 .end(function (error, res) {
-                    assert.ifError(error);
-                    assert.equal(res.status, status.OK);
+                    assert.ok(error);
+                    assert.equal(res.status, status.UNAUTHORIZED);
 
                     var results;
                     assert.doesNotThrow(function (){
                         results = JSON.parse(res.text);
                     });
 
-                    assert.equal(results.message, "Authentication failed. Login incorrect");
+                    assert.equal(results.message, "Authentication failed. Login incorrect.");
                     done();
                 });
         });
@@ -212,9 +212,20 @@ module.exports = function () {
                 .set("Authorization", token)
                 .end(function (error, res) {
                     assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
-                    assert.equal(res.body.message, "CastError: Cast to ObjectId failed for value \"1\" at path \"_id\"");
+                    assert.equal(res.body.message, "CastError: Cast to ObjectId failed for value \"1\" at path \"_id\" for model \"User\"");
                     done();
                 });
+        });
+
+        it("should return status 200 and message that API is running", function (done) {
+            var url = URL_ROOT + "/healthcheck";
+
+            superagent.get(url)
+                .end(function (error, res) {
+                    assert.equal(res.status, status.OK);
+                    assert.equal(res.body.message, "API is running");
+                    done();
+                })
         });
 
     });
