@@ -212,9 +212,20 @@ module.exports = function () {
                 .set("Authorization", token)
                 .end(function (error, res) {
                     assert.equal(res.status, status.INTERNAL_SERVER_ERROR);
-                    assert.equal(res.body.message, "CastError: Cast to ObjectId failed for value \"1\" at path \"_id\"");
+                    assert.equal(res.body.message, "CastError: Cast to ObjectId failed for value \"1\" at path \"_id\" for model \"User\"");
                     done();
                 });
+        });
+
+        it("should return status 200 and message that API is running", function (done) {
+            var url = URL_ROOT + "/healthcheck";
+
+            superagent.get(url)
+                .end(function (error, res) {
+                    assert.equal(res.status, status.OK);
+                    assert.equal(res.body.message, "API is running");
+                    done();
+                })
         });
 
     });
